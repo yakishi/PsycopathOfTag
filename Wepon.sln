@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wepon", "Wepon.csproj", "{A684F3A2-FDF8-C7CE-D83D-8BA11C4E7721}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wepon.Editor", "Wepon.Editor.csproj", "{8BB2E2EA-A72E-B2C4-FA1D-66DB5480FF75}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A684F3A2-FDF8-C7CE-D83D-8BA11C4E7721}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A684F3A2-FDF8-C7CE-D83D-8BA11C4E7721}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A684F3A2-FDF8-C7CE-D83D-8BA11C4E7721}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A684F3A2-FDF8-C7CE-D83D-8BA11C4E7721}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BB2E2EA-A72E-B2C4-FA1D-66DB5480FF75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BB2E2EA-A72E-B2C4-FA1D-66DB5480FF75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BB2E2EA-A72E-B2C4-FA1D-66DB5480FF75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BB2E2EA-A72E-B2C4-FA1D-66DB5480FF75}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
