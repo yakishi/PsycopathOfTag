@@ -297,11 +297,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Terasurware\Classes\Editor\ModeList_importer.cs" />
+    <Compile Include="Assets\Terasurware\Classes\Editor\TrapList_importer.cs" />
     <Compile Include="Assets\Terasurware\Classes\Editor\WeaponList_importer.cs" />
     <Compile Include="Assets\Terasurware\Editor\ExcelImporterMaker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Plugins\UniRx\ReadMe.txt" />
+    <None Include="Assets\Scene\TrapTest\KY_effects\MagicEffectsPackFree\ReadMe.txt" />
+    <None Include="Assets\Scene\TrapTest\_Creepy_Cat\3D Games Effects Pack Free\Example_02\Help Readme SOS.txt" />
+    <None Include="Assets\Scene\TrapTest\_Creepy_Cat\3D Games Effects Pack Free\_FAQ - Informations\Help Readme SOS.txt" />
     <None Include="Assets\Terasurware\Editor\EntityTemplate.txt" />
     <None Include="Assets\Terasurware\Editor\EntityTemplate2.txt" />
     <None Include="Assets\Terasurware\Editor\ExportTemplate.txt" />

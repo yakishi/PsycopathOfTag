@@ -48,7 +48,7 @@ public class ChasePlayer : Player {
 
         if (MyInput.OnTrigger()) {
             if (magazine == 0) {
-                Debug.Log(gameObject.name + " : 弾切れだ！！");
+                //Debug.Log(gameObject.name + " : 弾切れだ！！");
             }
 
             if (magazine > 0 && !next_bullet) {
@@ -118,7 +118,7 @@ public class ChasePlayer : Player {
             mode = 1;
             range = modeList.param[1].Range;
             magazine = modeList.param[1].Bullet;
-            gameObject.GetComponent<MeshRenderer>().material.color = new Color(252,0,252,0);
+            gameObject.GetComponent<MeshRenderer>().material.color = new Color(252,0,252,1);
             Debug.Log("ｺﾞﾘ");
         }
         else if (ID == "K") {
@@ -141,6 +141,12 @@ public class ChasePlayer : Player {
             magazine = modeList.param[4].Bullet;
             gameObject.GetComponent<MeshRenderer>().material.color = Color.cyan;
             Debug.Log("ﾊﾟﾙﾌﾟﾝﾃ");
+        }
+        else if (ID == "0") {
+            mode = 0;
+            range = 0;
+            magazine = 0;
+            gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         }
     }
 

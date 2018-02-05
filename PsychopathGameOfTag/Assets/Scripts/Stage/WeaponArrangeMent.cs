@@ -19,9 +19,9 @@ public class WeaponArrangeMent : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        arrangePoint = new GameObject[arrangeNumber];//new Vector3[arrangeNumber];
+        arrangePoint = new GameObject[arrangeNumber];
         for(int i = 1; i < arrangePoint.Length + 1; i++) {
-            arrangePoint[i - 1] = GameObject.Find("ArrangePoint" + i);//.transform.position;
+            arrangePoint[i - 1] = GameObject.Find("ArrangePoint" + i);
         }
         
         timer = new Timer(arrangeTime);

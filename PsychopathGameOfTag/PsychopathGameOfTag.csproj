@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2017.2.0p1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -229,6 +231,10 @@
     <Compile Include="Assets\Resources\Model\Locomotion Setup\Locomotion\Scripts\Locomotion.cs" />
     <Compile Include="Assets\Resources\Model\Locomotion Setup\Scripts\JoystickToEvents.cs" />
     <Compile Include="Assets\Resources\Model\Nomal Charactar\LocomotionPlayer.cs" />
+    <Compile Include="Assets\Scene\TrapTest\_Creepy_Cat\3D Games Effects Pack Free\Example_02\InstanceExample.cs" />
+    <Compile Include="Assets\Scene\TrapTest\KY_effects\Script\ConGUI.cs" />
+    <Compile Include="Assets\Scene\TrapTest\KY_effects\Script\Lighting.cs" />
+    <Compile Include="Assets\Scripts\Stage\TrapArrangeMent.cs" />
     <Compile Include="Assets\Script\Gorira.cs" />
     <Compile Include="Assets\Script\Gun.cs" />
     <Compile Include="Assets\Script\Karate.cs" />
@@ -237,6 +243,7 @@
     <Compile Include="Assets\Script\P.cs" />
     <Compile Include="Assets\Script\Sosa.cs" />
     <Compile Include="Assets\Script\Status.cs" />
+    <Compile Include="Assets\Script\Trap.cs" />
     <Compile Include="Assets\Scripts\AnimationController.cs" />
     <Compile Include="Assets\Scripts\Bullet.cs" />
     <Compile Include="Assets\Scripts\ChasePlayer.cs" />
@@ -263,10 +270,14 @@
     <Compile Include="Assets\Scripts\Title\Title.cs" />
     <Compile Include="Assets\Scripts\WeaponType.cs" />
     <Compile Include="Assets\Terasurware\Classes\ModeList.cs" />
+    <Compile Include="Assets\Terasurware\Classes\TrapList.cs" />
     <Compile Include="Assets\Terasurware\Classes\WeaponList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Plugins\UniRx\ReadMe.txt" />
+    <None Include="Assets\Scene\TrapTest\KY_effects\MagicEffectsPackFree\ReadMe.txt" />
+    <None Include="Assets\Scene\TrapTest\_Creepy_Cat\3D Games Effects Pack Free\Example_02\Help Readme SOS.txt" />
+    <None Include="Assets\Scene\TrapTest\_Creepy_Cat\3D Games Effects Pack Free\_FAQ - Informations\Help Readme SOS.txt" />
     <None Include="Assets\Terasurware\Editor\EntityTemplate.txt" />
     <None Include="Assets\Terasurware\Editor\EntityTemplate2.txt" />
     <None Include="Assets\Terasurware\Editor\ExportTemplate.txt" />

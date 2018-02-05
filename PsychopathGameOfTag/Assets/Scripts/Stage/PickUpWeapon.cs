@@ -38,17 +38,25 @@ public class PickUpWeapon : MonoBehaviour {
 
         foreach (Transform n in collider.transform) {
             GameObject child = n.gameObject;
-            if(child.tag == "Weapon") {
+            if(child.tag == "Weapon" && this.tag == "Weapon") {
                 Destroy(n.gameObject);
             }
         }
 
-        Instantiate(prefab, collider.transform);
-        
-        foreach (Transform n in collider.transform) {
-            GameObject child = n.gameObject;
-            if (child.tag == "Weapon") {
-                n.gameObject.transform.position = n.parent.transform.position + Vector3.up * 3.0f;
+
+        if (this.tag == "Trap") {
+            EscapePlayer escapePlayer = collider.gameObject.GetComponent<EscapePlayer>();
+            escapePlayer.trapId = id;
+            escapePlayer.setTrapPrefab = prefab;
+        }
+        else if (this.tag == "Weapon") {
+            Instantiate(prefab, collider.transform);
+
+            foreach (Transform n in collider.transform) {
+                GameObject child = n.gameObject;
+                if (child.tag == "Weapon") {
+                    n.gameObject.transform.position = n.parent.transform.position + Vector3.up * 3.0f;
+                }
             }
         }
 

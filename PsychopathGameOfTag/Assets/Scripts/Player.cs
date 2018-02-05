@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UniRx;
 
 public class Player : MonoBehaviour {
 
@@ -57,6 +58,8 @@ public class Player : MonoBehaviour {
 
     protected bool pointFlag;
 
+    public bool catchTrap;
+
     protected int mode = 0;
     public int getMode
     {
@@ -79,6 +82,7 @@ public class Player : MonoBehaviour {
         hp = 50;
         time = new Timer(respownTime);
         pointFlag = false;
+        catchTrap = false;
     }
 
     public virtual void ChangeType(Player p)
@@ -111,6 +115,50 @@ public class Player : MonoBehaviour {
     public virtual void AddPoint()
     {
 
+    }
+
+    public void CatchTrap(TrapList.Param trap,GameObject obj)
+    {
+        if (trap == null) return;
+
+        switch (trap.ID) {
+            case "Sw":
+                catchTrap = true;
+                Observable.Timer(System.TimeSpan.FromSeconds(trap.Time))
+                .Take(1)
+                .Subscribe(_ => {
+                    catchTrap = false;
+                    Destroy(obj);
+                })
+                .AddTo(this);
+                break;
+            case "J":
+                HitBullet((int)trap.Power);
+                Observable.Timer(System.TimeSpan.FromSeconds(0.5))
+                .Take(1)
+                .Subscribe(_ => {
+                    Destroy(obj);
+                    catchTrap = false;
+                })
+                .AddTo(this);
+                
+                break;
+            case "N":
+                catchTrap = true;
+                Observable.Timer(System.TimeSpan.FromSeconds(trap.Time))
+                .Take(1)
+                .Subscribe(_ => {
+                    if(type == PlayerMode.Chase) {
+                        ChasePlayer cahser = gameObject.GetComponent<ChasePlayer>();
+                        cahser.Change_Mode("0");
+                    }
+                    Destroy(obj);
+                    catchTrap = false;
+                })
+                .AddTo(this);
+                break;
+
+        }
     }
 
     protected void DeadTime()

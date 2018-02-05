@@ -27,7 +27,7 @@ public class PlayerMove : MonoBehaviour {
 
         if(player == null) player = gameObject.GetComponent<Player>();
 
-        if (player.isDead) return;
+        if (player.isDead || player.catchTrap) return;
 
         inputHorizontal = MyInput.Direction().x;
         inputVertical = MyInput.Direction().z;

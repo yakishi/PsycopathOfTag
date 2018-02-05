@@ -4,10 +4,22 @@ using UnityEngine;
 
 public class EscapePlayer : Player {
 
+    private GameObject trapPrefab;
+    public GameObject setTrapPrefab
+    {
+        set
+        {
+            trapPrefab = value;
+        }
+    }
+
+    public string trapId;
+    
 	// Use this for initialization
 	void Start () {
         Initialize();
         type = PlayerMode.Escape;
+        trapId = "";
     }
 
     public override void ChangeType(Player p)
@@ -19,6 +31,15 @@ public class EscapePlayer : Player {
     public override void FixedUpdate () {
         type = PlayerMode.Escape;
 
+        if (MyInput.OnTrigger() && trapId != "") {
+            trapPrefab.GetComponent<Trap>().ID = trapId;
+            trapPrefab.GetComponent<Trap>().SetPlayerTeamInfo(team);
+            Instantiate(trapPrefab, new Vector3(transform.position.x + -moveForward.x, -0.5f, transform.position.z + -moveForward.z), Quaternion.identity);
+
+            ClearTrapInfo();
+        }
+
+        
         if (isDead) {
             if (!pointFlag) {
                 AddPoint();
@@ -28,6 +49,12 @@ public class EscapePlayer : Player {
         }
 
         base.FixedUpdate();
+    }
+
+    void ClearTrapInfo()
+    {
+        trapId = "";
+        trapPrefab = null;
     }
 
     public override void AddPoint()
