@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class WeaponArrangeMent : MonoBehaviour {
+public class WeaponArrangeMent : NetworkBehaviour {
 
     [SerializeField]
     private int arrangeNumber;       //アイテム出現位置の最大数
@@ -18,7 +19,7 @@ public class WeaponArrangeMent : MonoBehaviour {
     int randomValue;
 
     // Use this for initialization
-    void Start () {
+    public override void OnStartServer () {
         arrangePoint = new GameObject[arrangeNumber];
         for(int i = 1; i < arrangePoint.Length + 1; i++) {
             arrangePoint[i - 1] = GameObject.Find("ArrangePoint" + i);
@@ -30,6 +31,9 @@ public class WeaponArrangeMent : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
+        if (!isServer) return;
+
         timer.Update();
         randomValue = Random.Range(0, arrangePoint.Length);
 
@@ -37,7 +41,7 @@ public class WeaponArrangeMent : MonoBehaviour {
 
         if(timer.RemainTime <= 0 && !arrangeFlag) {
             var prefab = Resources.Load<GameObject>("Prefab/WeaponObject" + randomValue);
-            ArrangeObject(arrangePoint[randomValue], prefab);            
+            CmdArrangeObject(arrangePoint[randomValue], prefab);            
             arrangeFlag = true;
         }
         
@@ -46,15 +50,17 @@ public class WeaponArrangeMent : MonoBehaviour {
         }
 	}
 
-    void ArrangeObject(GameObject parent,GameObject prefab)
+    [Command]
+    void CmdArrangeObject(GameObject parent,GameObject prefab)
     {        
         if (parent.transform.childCount <= 0) {
-            Instantiate(prefab, parent.transform);
+            GameObject obj = Instantiate(prefab, parent.transform);
+            NetworkServer.Spawn(obj);
             return;
         }
         else {
             Debug.Log("Already Arrange");
-            ArrangeObject(arrangePoint[Random.Range(0,arrangePoint.Length)], prefab);
+            CmdArrangeObject(arrangePoint[Random.Range(0,arrangePoint.Length)], prefab);
         }
     }
 

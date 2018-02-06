@@ -1,11 +1,15 @@
 fileFormatVersion: 2
 guid: da92666cf8d94cb43b21a832e2f2b8c3
-timeCreated: 1513488879
+timeCreated: 1517893185
 licenseType: Free
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - game: {instanceID: 0}
+  - modeList: {fileID: 11400000, guid: d59cb12f683d46c478d0b6cfc98e87d1, type: 2}
+  - muzzle: {instanceID: 0}
+  - muzzle_Type: {fileID: 11400000, guid: 0122a214d6a94114994206f2dcb3a0c1, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

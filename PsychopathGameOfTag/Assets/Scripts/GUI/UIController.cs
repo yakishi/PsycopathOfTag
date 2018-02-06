@@ -33,8 +33,15 @@ public class UIController : MonoBehaviour {
 		
 	}
 	
+    public void SetPlayer(Player p)
+    {
+        player = p;
+    }
+
 	// Update is called once per frame
 	void Update () {
+        if (player == null) return;
+
         TeamIconDisplayer();
         if(player.Type == Player.PlayerMode.Chase)  modeImg.sprite = WeaponImage(player.getMode);
         

@@ -7,7 +7,8 @@ public class Mode : MonoBehaviour {
     private bool next_bullet = false;
     private float range;
     public GameObject muzzle;
-    public GameObject[] muzzle_Type;
+    [SerializeField]
+    GameObject[] muzzle_Type;
     private float muzzleRadius;
     private Vector3 muzzleHalf;
     public ModeList modeList;

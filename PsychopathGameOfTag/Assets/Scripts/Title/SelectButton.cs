@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectButton : MonoBehaviour {
+public class SelectButton : MonoBehaviour
+{
 
-    Vector3 defScale;
+    Vector3 defScale = Vector3.one;
+    // Use this for initialization
+    void Start()
+    {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+    }
 
     public void Select()
     {
@@ -22,7 +23,6 @@ public class SelectButton : MonoBehaviour {
 
     public void DeSelect()
     {
-        if(defScale != null)
-            gameObject.transform.localScale = defScale;
+        gameObject.transform.localScale = defScale;
     }
 }

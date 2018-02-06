@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class PlayerMove : MonoBehaviour {
+public class PlayerMove : NetworkBehaviour {
 
     Player player;
 
@@ -27,7 +28,7 @@ public class PlayerMove : MonoBehaviour {
 
         if(player == null) player = gameObject.GetComponent<Player>();
 
-        if (player.isDead || player.catchTrap) return;
+        if (player.isDead || player.catchTrap || !isLocalPlayer) return;
 
         inputHorizontal = MyInput.Direction().x;
         inputVertical = MyInput.Direction().z;

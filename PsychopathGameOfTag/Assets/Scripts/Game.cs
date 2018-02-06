@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
 
-public class Game : MonoBehaviour {
+public class Game : NetworkBehaviour {
 
     public enum Team
     {
@@ -30,7 +31,7 @@ public class Game : MonoBehaviour {
 
     Dictionary<Team, int> team;
 
-    Player[ , ] players;
+    //Player[ , ] players;
     
     // Use this for initialization
     void Start () {
@@ -43,7 +44,7 @@ public class Game : MonoBehaviour {
         team = new Dictionary<Team, int>();
         team.Add(Team.red, 0);
         team.Add(Team.blue, 0);
-        players = new Player[2,4];
+        //players = new Player[2,4];
 
         /*float posX = 1.0f;
         float posZ = -3.0f;
@@ -85,7 +86,8 @@ public class Game : MonoBehaviour {
         return team[side];
     }
 
-    public void AddPoint(Team side,int point)
+    [Command]
+    public void CmdAddPoint(Team side,int point)
     {
         List<Team> list = new List<Team>(team.Keys);
 
