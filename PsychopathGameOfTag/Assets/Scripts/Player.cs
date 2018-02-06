@@ -79,13 +79,21 @@ public class Player : NetworkBehaviour {
         }
     }
 
-    public virtual void Start()
+    public override void OnStartLocalPlayer()
     {
         Initialize();
     }
 
+    public override void OnStartServer()
+    {
+        Initialize();
+        base.OnStartServer();
+    }
+
     protected void Initialize()
     {
+        game = GameObject.Find("Game").GetComponent<Game>();
+
         mainCamera = GameObject.Find("Main Camera").GetComponent<MainCamera>();
         uIController = GameObject.Find("Canvas").GetComponent<UIController>();
 
@@ -94,10 +102,15 @@ public class Player : NetworkBehaviour {
 
         player = this.gameObject;
         respownTime = 5;
-        hp = 50;
+        hp = 10;
         time = new Timer(respownTime);
         pointFlag = false;
         catchTrap = false;
+    }
+
+    public void SetGame(Game g)
+    {
+        game = g;
     }
 
     public virtual void ChangeType(Player p)
@@ -130,7 +143,7 @@ public class Player : NetworkBehaviour {
     [Command]
     public virtual void CmdAddPoint()
     {
-
+        Debug.Log("きた");
     }
 
     public void CatchTrap(TrapList.Param trap,GameObject obj)
@@ -175,6 +188,21 @@ public class Player : NetworkBehaviour {
                 break;
 
         }
+    }
+
+    public Game.Team EnemyTeam()
+    {
+        Game.Team temp = team;
+        switch (team) {
+            case Game.Team.red:
+                temp = Game.Team.blue;
+                break;
+            case Game.Team.blue:
+                temp = Game.Team.red;
+                break;
+        }
+
+        return temp;
     }
 
     protected void DeadTime()

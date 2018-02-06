@@ -16,21 +16,13 @@ public class EscapePlayer : Player {
 
     public string trapId;
 
-    public override void Start()
+    public override void OnStartLocalPlayer()
     {
         type = PlayerMode.Escape;
         trapId = "";
-        base.Start();
 
+        base.OnStartLocalPlayer();
     }
-
-    // Use this for initialization
-    //public override void OnStartServer () {
-    //    base.OnStartServer();
-    //    Initialize();
-    //    type = PlayerMode.Escape;
-    //    trapId = "";
-    //}
 
     public override void ChangeType(Player p)
     {
@@ -70,25 +62,11 @@ public class EscapePlayer : Player {
     [Command]
     public override void CmdAddPoint()
     {
-        game.CmdAddPoint(EnemyTeam(), 5);
+        game.AddPoint(EnemyTeam(), 5);
         base.CmdAddPoint();
     }
 
-    Game.Team EnemyTeam()
-    {
-        Game.Team temp = team;
-        switch (team) {
-            case Game.Team.red:
-                temp = Game.Team.blue;
-                break;
-            case Game.Team.blue:
-                temp = Game.Team.red;
-                break;
-        }
-
-        return temp;
-    }
-
+   
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Player") {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public class UIController : MonoBehaviour {
 
@@ -44,9 +45,9 @@ public class UIController : MonoBehaviour {
 
         TeamIconDisplayer();
         if(player.Type == Player.PlayerMode.Chase)  modeImg.sprite = WeaponImage(player.getMode);
-        
+
         points.text = "<color=#ff0000>" + game.getTeamPoint(Game.Team.red) + "</color> / " + "<color=#0000ff>" + game.getTeamPoint(Game.Team.blue) + "</color>";
-	}
+    }
 
     Sprite WeaponImage(int mode)
     {
@@ -77,4 +78,5 @@ public class UIController : MonoBehaviour {
                 break;
         }
     }
+
 }

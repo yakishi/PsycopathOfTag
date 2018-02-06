@@ -1,33 +1,34 @@
-﻿//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking;
 
-//public class TestChase : Player {
+public class TestChase : Player
+{
+    // Use this for initialization
+    void Start()
+    {
+        Initialize();
+    }
 
-//    [SerializeField]
-//    GameObject prefab;
+    // Update is calcled once per frame
+    public override void FixedUpdate()
+    {
+        type = PlayerMode.Escape;
 
-//    bool fire;
-//	// Use this for initialization
-//	void Start () {
-//        CmdInitialize();
-//        fire = false;
-//	}
-	
-//	// Update is calcled once per frame
-//	public override void FixedUpdate () {
-//        type = PlayerMode.Chase;
-//        if (MyInput.OnTrigger() && !fire) {
-//            GameObject bullet = GameObject.Instantiate(prefab, this.transform.position + Vector3.forward * 1.2f, Quaternion.identity);
-//            bullet.AddComponent<Bullet>();
+        if (isDead) {
+            if (!pointFlag) {
+                game.AddPoint(EnemyTeam(), 5);
+                ReStart();
+            }
+            pointFlag = true;
+        }
 
-//            //anim.PlayAnimation("Attack1Trigger");
-//            fire = true;
-//        }
-//        else if(MyInput.TriggerAxis() == 0.0f) {
-//            //anim.StopAnimation("Attack1Trigger");
-//            fire = false;
-//        }
-//        base.FixedUpdate();
-//	}
-//}
+        base.FixedUpdate();
+    }
+
+    void ReStart()
+    {
+        hp = 10;
+    }
+}

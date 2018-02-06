@@ -24,21 +24,12 @@ public class PlayerMove : NetworkBehaviour {
 
     void FixedUpdate()
     {
-
-
         if(player == null) player = gameObject.GetComponent<Player>();
 
         if (player.isDead || player.catchTrap || !isLocalPlayer) return;
 
         inputHorizontal = MyInput.Direction().x;
         inputVertical = MyInput.Direction().z;
-
-        /*if (MyInput.isMove()) {
-            animController.PlayAnimation("Moving");
-        }
-        else {
-            animController.StopAnimation("Moving");
-        }*/
 
         // カメラの方向から、X-Z平面の単位ベクトルを取得
         player.cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;

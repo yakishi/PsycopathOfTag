@@ -5,8 +5,6 @@ using UnityStandardAssets.Utility;
 
 public class MainCamera : MonoBehaviour
 {
-    FollowTarget followTarget;
-
     GameObject targetObj;
     Vector3 targetPos;
 

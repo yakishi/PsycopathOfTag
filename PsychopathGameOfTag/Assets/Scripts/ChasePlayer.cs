@@ -15,18 +15,11 @@ public class ChasePlayer : Player {
     private AudioClip[] SE;
     AudioSource audioSource;
 
-    public override void Start()
+    public override void OnStartLocalPlayer()
     {
         type = PlayerMode.Chase;
-        base.Start();
+        base.OnStartLocalPlayer();
     }
-
-    //public override void OnStartServer()
-    //{
-    //    base.OnStartServer();
-    //    Initialize();
-    //
-    //}
 
 
     // Use this for initialization
@@ -96,7 +89,7 @@ public class ChasePlayer : Player {
         //Vector3 cameraCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
         
         Ray ray = new Ray(player.transform.position,cameraForward) ;
-        RaycastHit[] hits = Physics.SphereCastAll(ray, muzzleRadius, range, LayerMask.GetMask("Enemy", "Block"));
+        RaycastHit[] hits;
 
         if (modeList.param[mode].ID == "G" || modeList.param[mode].ID == "K" || modeList.param[mode].ID == "N") {
             hits = Physics.SphereCastAll(ray, muzzleRadius, range, LayerMask.GetMask("Enemy", "Block"));
@@ -113,7 +106,6 @@ public class ChasePlayer : Player {
             if (hit.collider.tag == "Block") {
                 if (hit.distance < blockDis) {
                     blockDis = hit.distance;
-                    Debug.Log("ｶｷﾝｯ");
                 }
             }
         }
@@ -122,7 +114,6 @@ public class ChasePlayer : Player {
             if (hit.collider.gameObject.GetComponent<Player>().team != this.team && hit.distance < blockDis && hit.distance < enemyDis) {
                 enemyDis = hit.distance;
                 nearEnemy = hit.collider.gameObject.GetComponent<Player>();
-                Debug.Log("ﾋﾃﾞﾌﾞｯ");
             }
         }
 
