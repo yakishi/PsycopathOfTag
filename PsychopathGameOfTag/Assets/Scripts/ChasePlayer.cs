@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class ChasePlayer : Player {
     public int magazine;
@@ -8,22 +9,25 @@ public class ChasePlayer : Player {
     public float range;
     public GameObject muzzle;
     public float muzzleRadius;
+    private Vector3 muzzleHalf;
     private Player nearEnemy;
     [SerializeField]
     private AudioClip[] SE;
     AudioSource audioSource;
 
-    void Start()
+    public override void OnStartLocalPlayer()
     {
-        Initialize();
         type = PlayerMode.Chase;
+        base.OnStartLocalPlayer();
     }
 
 
     // Use this for initialization
     void OnEnable () {
-        muzzle = GameObject.Find("Head");
-        muzzleRadius = muzzle.GetComponent<SphereCollider>().radius;
+        muzzle = gameObject;
+        if (muzzle_Type != null) {
+            muzzleRadius = muzzle_Type.muzzTypeList[mode].GetComponent<SphereCollider>().radius;
+        }
 
         if (modeList != null) {
             range = modeList.param[0].Range;
@@ -38,13 +42,17 @@ public class ChasePlayer : Player {
     public override void ChangeType(Player p)
     {
         modeList = p.modeList;
+        muzzle_Type = p.muzzle_Type;
+        muzzle = GameObject.Find("Head"); ;
+        muzzleRadius = muzzle_Type.muzzTypeList[mode].GetComponent<SphereCollider>().radius;
+        
 
         base.ChangeType(p);
     }
 
     // Update is called once per frame
     public override void FixedUpdate () {
-        type = PlayerMode.Chase;
+        
 
         if (MyInput.OnTrigger()) {
             if (magazine == 0) {
@@ -52,7 +60,7 @@ public class ChasePlayer : Player {
             }
 
             if (magazine > 0 && !next_bullet) {
-                Shoot();
+                CmdShoot();
                 magazine--;
                 next_bullet = true;
                 StartCoroutine("Cool_Time");
@@ -75,13 +83,20 @@ public class ChasePlayer : Player {
         base.FixedUpdate();
     }
 
-
-    void Shoot()
+    [Command]
+    void CmdShoot()
     {
         //Vector3 cameraCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
         
         Ray ray = new Ray(player.transform.position,cameraForward) ;
-        RaycastHit[] hits = Physics.SphereCastAll(ray, muzzleRadius, range, LayerMask.GetMask("Enemy", "Block"));
+        RaycastHit[] hits;
+
+        if (modeList.param[mode].ID == "G" || modeList.param[mode].ID == "K" || modeList.param[mode].ID == "N") {
+            hits = Physics.SphereCastAll(ray, muzzleRadius, range, LayerMask.GetMask("Enemy", "Block"));
+        }
+        else {
+            hits = Physics.BoxCastAll(muzzle.transform.position, muzzleHalf / 2, muzzle.transform.forward, muzzle.transform.rotation, range, LayerMask.GetMask("Enemy", "Block"));
+        }
 
         float enemyDis = range;
         float blockDis = range;
@@ -91,7 +106,6 @@ public class ChasePlayer : Player {
             if (hit.collider.tag == "Block") {
                 if (hit.distance < blockDis) {
                     blockDis = hit.distance;
-                    Debug.Log("ｶｷﾝｯ");
                 }
             }
         }
@@ -100,12 +114,11 @@ public class ChasePlayer : Player {
             if (hit.collider.gameObject.GetComponent<Player>().team != this.team && hit.distance < blockDis && hit.distance < enemyDis) {
                 enemyDis = hit.distance;
                 nearEnemy = hit.collider.gameObject.GetComponent<Player>();
-                Debug.Log("ﾋﾃﾞﾌﾞｯ");
             }
         }
 
         if (nearEnemy != null) {
-            nearEnemy.HitBullet(modeList.param[mode].Power);
+            nearEnemy.CmdHitBullet(modeList.param[mode].Power);
             Debug.Log("hit");
         }
 
@@ -114,40 +127,43 @@ public class ChasePlayer : Player {
 
     public void Change_Mode(string ID)
     {
+        Color newColor = Color.white;
+
         if (ID == "G") {
             mode = 1;
-            range = modeList.param[1].Range;
-            magazine = modeList.param[1].Bullet;
-            gameObject.GetComponent<MeshRenderer>().material.color = new Color(252,0,252,1);
+            newColor = new Color(252,0,252,1);
             Debug.Log("ｺﾞﾘ");
         }
         else if (ID == "K") {
             mode = 2;
-            range = modeList.param[2].Range;
-            magazine = modeList.param[2].Bullet;
-            gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
+            newColor = Color.green;
             Debug.Log("ｾｲﾔ");
         }
         else if (ID == "Ks") {
             mode = 3;
-            range = modeList.param[3].Range;
-            magazine = modeList.param[3].Bullet;
-            gameObject.GetComponent<MeshRenderer>().material.color = Color.gray;
+            newColor = Color.gray;
             Debug.Log("ﾁｬｷ");
         }
         else if (ID == "S") {
             mode = 4;
-            range = modeList.param[4].Range;
-            magazine = modeList.param[4].Bullet;
-            gameObject.GetComponent<MeshRenderer>().material.color = Color.cyan;
+            newColor = Color.cyan;
             Debug.Log("ﾊﾟﾙﾌﾟﾝﾃ");
         }
-        else if (ID == "0") {
+        else if (ID == "N") {
             mode = 0;
-            range = 0;
-            magazine = 0;
-            gameObject.GetComponent<MeshRenderer>().material.color = Color.white;
+            Debug.Log("ｱｼｸﾋﾞｦｸｼﾞｷﾏｼﾀｰ");        
         }
+
+        if (ID == "G" || ID == "K" || ID == "N") {
+            muzzleRadius = muzzle_Type.muzzTypeList[mode].GetComponent<SphereCollider>().radius;
+        }
+        else {
+            muzzleHalf = muzzle_Type.muzzTypeList[mode].GetComponent<BoxCollider>().size;
+        }
+
+        range = modeList.param[mode].Range;
+        magazine = modeList.param[mode].Bullet;
+        gameObject.GetComponent<MeshRenderer>().material.color = newColor;
     }
 
     IEnumerator Cool_Time()

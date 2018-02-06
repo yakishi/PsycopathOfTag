@@ -234,14 +234,8 @@
     <Compile Include="Assets\Scene\TrapTest\_Creepy_Cat\3D Games Effects Pack Free\Example_02\InstanceExample.cs" />
     <Compile Include="Assets\Scene\TrapTest\KY_effects\Script\ConGUI.cs" />
     <Compile Include="Assets\Scene\TrapTest\KY_effects\Script\Lighting.cs" />
-    <Compile Include="Assets\Scripts\Stage\TrapArrangeMent.cs" />
-    <Compile Include="Assets\Script\Gorira.cs" />
-    <Compile Include="Assets\Script\Gun.cs" />
-    <Compile Include="Assets\Script\Karate.cs" />
-    <Compile Include="Assets\Script\Kenshi.cs" />
+    <Compile Include="Assets\Scripts\Game.cs" />
     <Compile Include="Assets\Script\Mode.cs" />
-    <Compile Include="Assets\Script\P.cs" />
-    <Compile Include="Assets\Script\Sosa.cs" />
     <Compile Include="Assets\Script\Status.cs" />
     <Compile Include="Assets\Script\Trap.cs" />
     <Compile Include="Assets\Scripts\AnimationController.cs" />
@@ -249,7 +243,6 @@
     <Compile Include="Assets\Scripts\ChasePlayer.cs" />
     <Compile Include="Assets\Scripts\Credit\Credit.cs" />
     <Compile Include="Assets\Scripts\EscapePlayer.cs" />
-    <Compile Include="Assets\Scripts\Game.cs" />
     <Compile Include="Assets\Scripts\GUI\TimeGUI.cs" />
     <Compile Include="Assets\Scripts\GUI\Timer.cs" />
     <Compile Include="Assets\Scripts\GUI\UIController.cs" />
@@ -262,14 +255,16 @@
     <Compile Include="Assets\Scripts\SampleCamera2.cs" />
     <Compile Include="Assets\Scripts\Stage\PickUpWeapon.cs" />
     <Compile Include="Assets\Scripts\Stage\SpinObject.cs" />
+    <Compile Include="Assets\Scripts\Stage\TrapArrangeMent.cs" />
     <Compile Include="Assets\Scripts\Stage\WeaponArrangeMent.cs" />
+    <Compile Include="Assets\Scripts\Standard Assets\Utility\FollowTarget.cs" />
     <Compile Include="Assets\Scripts\TestChase.cs" />
-    <Compile Include="Assets\Scripts\TestEnemy.cs" />
     <Compile Include="Assets\Scripts\TestMikata.cs" />
     <Compile Include="Assets\Scripts\Title\SelectButton.cs" />
     <Compile Include="Assets\Scripts\Title\Title.cs" />
     <Compile Include="Assets\Scripts\WeaponType.cs" />
     <Compile Include="Assets\Terasurware\Classes\ModeList.cs" />
+    <Compile Include="Assets\Terasurware\Classes\MuzzleType.cs" />
     <Compile Include="Assets\Terasurware\Classes\TrapList.cs" />
     <Compile Include="Assets\Terasurware\Classes\WeaponList.cs" />
   </ItemGroup>
@@ -277,7 +272,6 @@
     <None Include="Assets\Plugins\UniRx\ReadMe.txt" />
     <None Include="Assets\Scene\TrapTest\KY_effects\MagicEffectsPackFree\ReadMe.txt" />
     <None Include="Assets\Scene\TrapTest\_Creepy_Cat\3D Games Effects Pack Free\Example_02\Help Readme SOS.txt" />
-    <None Include="Assets\Scene\TrapTest\_Creepy_Cat\3D Games Effects Pack Free\_FAQ - Informations\Help Readme SOS.txt" />
     <None Include="Assets\Terasurware\Editor\EntityTemplate.txt" />
     <None Include="Assets\Terasurware\Editor\EntityTemplate2.txt" />
     <None Include="Assets\Terasurware\Editor\ExportTemplate.txt" />

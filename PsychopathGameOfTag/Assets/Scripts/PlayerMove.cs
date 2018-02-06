@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class PlayerMove : MonoBehaviour {
+public class PlayerMove : NetworkBehaviour {
 
     Player player;
 
@@ -23,21 +24,12 @@ public class PlayerMove : MonoBehaviour {
 
     void FixedUpdate()
     {
-
-
         if(player == null) player = gameObject.GetComponent<Player>();
 
-        if (player.isDead || player.catchTrap) return;
+        if (player.isDead || player.catchTrap || !isLocalPlayer) return;
 
         inputHorizontal = MyInput.Direction().x;
         inputVertical = MyInput.Direction().z;
-
-        /*if (MyInput.isMove()) {
-            animController.PlayAnimation("Moving");
-        }
-        else {
-            animController.StopAnimation("Moving");
-        }*/
 
         // カメラの方向から、X-Z平面の単位ベクトルを取得
         player.cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;

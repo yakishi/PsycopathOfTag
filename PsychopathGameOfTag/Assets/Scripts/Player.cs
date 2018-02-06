@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UniRx;
 
-public class Player : MonoBehaviour {
+public class Player : NetworkBehaviour {
 
     public enum PlayerMode
     {
@@ -12,6 +13,7 @@ public class Player : MonoBehaviour {
         Escape
     }
 
+    [SyncVar]
     protected PlayerMode type;
     public PlayerMode Type
     {
@@ -44,21 +46,29 @@ public class Player : MonoBehaviour {
     protected Game game;
 
     protected Timer time;
+
     protected float respownTime;
     float nearPlayerDistance;
 
+    [SyncVar]
     [System.NonSerialized]
     public Vector3 cameraForward;
     [System.NonSerialized]
     public Vector3 moveForward;
 
+    [SyncVar]
     public Game.Team team;
 
     public ModeList modeList;
+    [SerializeField]
+    public MuzzleType muzzle_Type;
 
     protected bool pointFlag;
 
     public bool catchTrap;
+
+    private MainCamera mainCamera;
+    private UIController uIController;
 
     protected int mode = 0;
     public int getMode
@@ -69,20 +79,38 @@ public class Player : MonoBehaviour {
         }
     }
 
-
-    private void Start()
+    public override void OnStartLocalPlayer()
     {
         Initialize();
     }
 
+    public override void OnStartServer()
+    {
+        Initialize();
+        base.OnStartServer();
+    }
+
     protected void Initialize()
     {
+        game = GameObject.Find("Game").GetComponent<Game>();
+
+        mainCamera = GameObject.Find("Main Camera").GetComponent<MainCamera>();
+        uIController = GameObject.Find("Canvas").GetComponent<UIController>();
+
+        mainCamera.SetPlayer(gameObject);
+        uIController.SetPlayer(this);
+
         player = this.gameObject;
         respownTime = 5;
-        hp = 50;
+        hp = 10;
         time = new Timer(respownTime);
         pointFlag = false;
         catchTrap = false;
+    }
+
+    public void SetGame(Game g)
+    {
+        game = g;
     }
 
     public virtual void ChangeType(Player p)
@@ -103,7 +131,8 @@ public class Player : MonoBehaviour {
         }
     }
 
-    public void HitBullet(int damage)
+    [Command]
+    public void CmdHitBullet(int damage)
     {
         hp -=damage;
         Debug.Log(gameObject.name + " HP : " + hp);
@@ -111,10 +140,10 @@ public class Player : MonoBehaviour {
             hp = 0;
         }
     }
-
-    public virtual void AddPoint()
+    [Command]
+    public virtual void CmdAddPoint()
     {
-
+        Debug.Log("きた");
     }
 
     public void CatchTrap(TrapList.Param trap,GameObject obj)
@@ -133,7 +162,7 @@ public class Player : MonoBehaviour {
                 .AddTo(this);
                 break;
             case "J":
-                HitBullet((int)trap.Power);
+                CmdHitBullet((int)trap.Power);
                 Observable.Timer(System.TimeSpan.FromSeconds(0.5))
                 .Take(1)
                 .Subscribe(_ => {
@@ -161,6 +190,21 @@ public class Player : MonoBehaviour {
         }
     }
 
+    public Game.Team EnemyTeam()
+    {
+        Game.Team temp = team;
+        switch (team) {
+            case Game.Team.red:
+                temp = Game.Team.blue;
+                break;
+            case Game.Team.blue:
+                temp = Game.Team.red;
+                break;
+        }
+
+        return temp;
+    }
+
     protected void DeadTime()
     {
         time.Update();
@@ -168,15 +212,15 @@ public class Player : MonoBehaviour {
         if (time.RemainTime <= 0) {
             switch (type) {
                 case PlayerMode.Chase:
+                    Destroy(GetComponent<ChasePlayer>());
                     player.AddComponent<EscapePlayer>();
                     player.GetComponent<EscapePlayer>().ChangeType(this);
-                    Destroy(GetComponent<ChasePlayer>());
                     type = PlayerMode.Escape;
                     break;
                 case PlayerMode.Escape:
+                    Destroy(GetComponent<EscapePlayer>());
                     player.AddComponent<ChasePlayer>();
                     player.GetComponent<ChasePlayer>().ChangeType(this);
-                    Destroy(GetComponent<EscapePlayer>());
                     type = PlayerMode.Chase;
                     break;
                 default:
@@ -189,7 +233,7 @@ public class Player : MonoBehaviour {
                 }
             }
 
-            hp = 50;
+            hp = 20;
             pointFlag = false;
             time.Reset();
         }

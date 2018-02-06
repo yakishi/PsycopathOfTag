@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class EscapePlayer : Player {
 
@@ -14,12 +15,13 @@ public class EscapePlayer : Player {
     }
 
     public string trapId;
-    
-	// Use this for initialization
-	void Start () {
-        Initialize();
+
+    public override void OnStartLocalPlayer()
+    {
         type = PlayerMode.Escape;
         trapId = "";
+
+        base.OnStartLocalPlayer();
     }
 
     public override void ChangeType(Player p)
@@ -29,7 +31,7 @@ public class EscapePlayer : Player {
 
     // Update is called once per frame
     public override void FixedUpdate () {
-        type = PlayerMode.Escape;
+        
 
         if (MyInput.OnTrigger() && trapId != "") {
             trapPrefab.GetComponent<Trap>().ID = trapId;
@@ -42,7 +44,7 @@ public class EscapePlayer : Player {
         
         if (isDead) {
             if (!pointFlag) {
-                AddPoint();
+                CmdAddPoint();
             }
             pointFlag = true;
             DeadTime();
@@ -57,27 +59,14 @@ public class EscapePlayer : Player {
         trapPrefab = null;
     }
 
-    public override void AddPoint()
+    [Command]
+    public override void CmdAddPoint()
     {
         game.AddPoint(EnemyTeam(), 5);
-        base.AddPoint();
+        base.CmdAddPoint();
     }
 
-    Game.Team EnemyTeam()
-    {
-        Game.Team temp = team;
-        switch (team) {
-            case Game.Team.red:
-                temp = Game.Team.blue;
-                break;
-            case Game.Team.blue:
-                temp = Game.Team.red;
-                break;
-        }
-
-        return temp;
-    }
-
+   
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Player") {
