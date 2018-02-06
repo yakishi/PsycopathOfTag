@@ -4,14 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
+using UnityEngine.SceneManagement;
+using System;
 
 public class CustumLobbyScript : NetworkLobbyManager {
-    private NetworkConnection netCon;
-    PlayerCount PC_cs;
+    public PlayerCount PC_cs;
     GameObject netPlayer;
     NetworkLobbyPlayer player;
     NetworkLobbyManager NLM;
-    int Ptime;
     int stage1, stage2, stage3;
     bool StageSelect;
 
@@ -25,13 +25,14 @@ public class CustumLobbyScript : NetworkLobbyManager {
         player = lobbyPlayerPrefab.GetComponent<CustumLobbyPlayer>();
         NLM = gameObject.GetComponent<NetworkLobbyManager>();
         StageSelect = false;
+        this.showLobbyGUI = false;
     }
 
     //クライアント関連の関数
     public override void OnStartHost()
     {
         base.OnStartHost();
-        this.showLobbyGUI = false;
+        //PC_cs = GameObject.Find("PlayerCountObject").GetComponent<PlayerCount>();
         stage1 = stage2 = stage3 = 0;
     }
 
@@ -47,8 +48,10 @@ public class CustumLobbyScript : NetworkLobbyManager {
     {
         Debug.Log("入室");
         base.OnLobbyClientEnter();
-        PC = GameObject.Find("PlayerCount").GetComponent<Text>();
-        //PC.text = PlayerCount.ToString();
+        //PC_cs = GameObject.Find("PlayerCountObject").GetComponent<PlayerCount>();
+        //PC = GameObject.Find("PlayerCountText").GetComponent<Text>();
+        //PC_cs.CmdCountUP();
+        //Debug.Log(PC_cs.CountReturn());
     }
 
     public override void OnLobbyStopClient()
@@ -57,21 +60,19 @@ public class CustumLobbyScript : NetworkLobbyManager {
         base.OnLobbyStopClient();
     }
 
+
     public override void OnLobbyServerConnect(NetworkConnection conn)
     {
-        Debug.Log("srever");
-        
         base.OnLobbyServerConnect(conn);
-    }
-    //サーバー関連の関数
-    public override void OnServerConnect(NetworkConnection conn)
-    {
-        base.OnServerConnect(conn);
+        PC = GameObject.Find("PlayerCountText").GetComponent<Text>();
+        PC_cs.count();
+        PC_cs.textsync(PC_cs.CountReturn());
     }
 
     public override void OnLobbyServerDisconnect(NetworkConnection conn)
     {
         Debug.Log("削除");
+        PC_cs.CountDown();
         base.OnLobbyServerDisconnect(conn);
     }
     public override void OnLobbyClientSceneChanged(NetworkConnection conn)
@@ -96,18 +97,17 @@ public class CustumLobbyScript : NetworkLobbyManager {
             }
         }else if (Input.GetKeyDown(KeyCode.D))
         {
-            Debug.Log(PC_cs);
+            Debug.Log(PC_cs.CountReturn());
             player.OnClientReady(true);
         }
-        
     }
 
     public void Clientstop()
     {
         //NetworkManager.singleton.StopMatchMaker();
-        OnLobbyStopHost();
-        StopMatchMaker();
-        StopServer();
+        //OnLobbyStopHost();
+        //StopMatchMaker();
+        //StopServer();
         OnLobbyStopClient();
         OnLobbyClientExit();
     }
@@ -117,6 +117,7 @@ public class CustumLobbyScript : NetworkLobbyManager {
         Debug.Log("StopHost");
         base.OnLobbyStopHost();
     }
+
     public void LoadScean(int stagenum)
     {
         switch (stagenum)
@@ -125,9 +126,8 @@ public class CustumLobbyScript : NetworkLobbyManager {
             case 2: StageCount(2);break;
             case 3: StageCount(3);break;
         }
-        //Debug.Log("stagenum" + stagenum);
-        //playScene = ("stage_k");
     }
+
     void StageCount(int n)
     {
         if (StageSelect == true)

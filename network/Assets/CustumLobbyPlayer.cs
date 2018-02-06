@@ -9,7 +9,7 @@ public class CustumLobbyPlayer : NetworkLobbyPlayer {
     private NetworkInstanceId netID;
     private GameObject player;
     private CustumLobbyPlayer CLPcs;
-    PlayerCount Counter;
+    // Counter;
 
     public override void OnClientEnterLobby()
     {
@@ -20,7 +20,7 @@ public class CustumLobbyPlayer : NetworkLobbyPlayer {
     {
         base.OnStartClient();
         this.readyToBegin = false;
-        Counter = GameObject.Find("PlayerCountObject").GetComponent<PlayerCount>();
+        //Counter = GameObject.Find("PlayerCountObject").GetComponent<PlayerCount>();
         netID = GetComponent<NetworkIdentity>().netId;
         //Counter.CmdCountUP();
     }

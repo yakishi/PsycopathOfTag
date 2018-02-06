@@ -8,8 +8,6 @@ public class combat : NetworkBehaviour {
 
     public const int maxHealth = 100;
 
-    [SyncVar]
-
     public int health = maxHealth;
 
     public void TakeDamage(int amount)
@@ -23,25 +21,7 @@ public class combat : NetworkBehaviour {
                 return;
             }
 
-            health = 0;
-            Debug.Log("Dead!");
-
-            
-        }
-
-        if (isServer)
-        {
-            RpcRwspawn();
-        }
-        
-    }
-
-    [ClientRpc]
-    private void RpcRwspawn()
-    {
-        if (isLocalPlayer)
-        {
-            GetComponent<PlayerSpawn>().Respawn();
-        }
+            health = 0;  
+        }        
     }
 }

@@ -54,7 +54,11 @@ public class HealthBar : NetworkBehaviour {
         Debug.Log("ChangeHealth");
         if(Life != null)
         {
-            Life.text = "Life:" + this.netId.Value + ":" + health.ToString();
+            if (isLocalPlayer)
+            {
+                Life.text = "Life:" + health.ToString();
+            }
+            
         }
         
     }

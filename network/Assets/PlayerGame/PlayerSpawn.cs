@@ -20,53 +20,32 @@ public class PlayerSpawn :  NetworkBehaviour{
         playerNetID = GetComponent<NetworkIdentity>().netId;
         m_Player = this.gameObject.GetComponent<PlayerSpawn>();
         CmdPlayerSpawn();
+        Debug.Log(spawn.transform.position);
         shokihantei = false;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log(this.tag);
 	}
 
-    [Command]
+    
     void CmdPlayerSpawn()
     {
-        if (shokihantei == false)
-        {
+        //if (shokihantei == false)
+        //{
             if (playerNetID.Value % 2 == 1)
             {
-                spawn = GameObject.Find("red_spawn1");
+                spawn = GameObject.Find("bule_spawn1");
                 transform.Translate(spawn.transform.position);
                 team = true;
-                //this.tag.
             }
             else
             {
-                spawn = GameObject.Find("blue_spawn1");
+                spawn = GameObject.Find("red_spawn1");
                 transform.Translate(spawn.transform.position);
                 team = false;
-                //this.tag = "blue";
             }
-
-            transform.Translate(resposition);
-            resposition = spawn.transform.position;
-            shokihantei = true;
-        }
-    }
-
-    [Command]
-    void CmdRespoawn()
-    {
-        Debug.Log("ResPOsition" + resposition);
-        GetComponent<HealthBar>().TakeDamage(1);
-    }
-
-    public Vector3 Respawn()
-    {
-        CmdRespoawn();
-        Debug.Log("Respawn");
-        return resposition;
-        
+        //}
     }
 
     public bool teamhantei()
