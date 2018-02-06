@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class ChasePlayer : Player {
+public class ChasePlayer : Player
+{
     public int magazine;
     private bool next_bullet = false;
     public float range;
@@ -23,7 +24,8 @@ public class ChasePlayer : Player {
 
 
     // Use this for initialization
-    void OnEnable () {
+    void OnEnable()
+    {
         muzzle = gameObject;
         if (muzzle_Type != null) {
             muzzleRadius = muzzle_Type.muzzTypeList[mode].GetComponent<SphereCollider>().radius;
@@ -45,14 +47,24 @@ public class ChasePlayer : Player {
         muzzle_Type = p.muzzle_Type;
         muzzle = GameObject.Find("Head"); ;
         muzzleRadius = muzzle_Type.muzzTypeList[mode].GetComponent<SphereCollider>().radius;
-        
+
 
         base.ChangeType(p);
     }
 
     // Update is called once per frame
-    public override void FixedUpdate () {
-        
+    public override void Update()
+    {
+
+        if (isDead) {
+            if (!pointFlag) {
+                CmdAddPoint(EnemyTeam(), 3);
+                pointFlag = true;
+            }
+            DeadTime();
+        }
+
+        if (!isLocalPlayer) return;
 
         if (MyInput.OnTrigger()) {
             if (magazine == 0) {
@@ -80,15 +92,13 @@ public class ChasePlayer : Player {
             Change_Mode("S");
         }
 
-        base.FixedUpdate();
+        base.Update();
     }
 
     [Command]
     void CmdShoot()
     {
-        //Vector3 cameraCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
-        
-        Ray ray = new Ray(player.transform.position,cameraForward) ;
+        Ray ray = new Ray(player.transform.position, cameraForward);
         RaycastHit[] hits;
 
         if (modeList.param[mode].ID == "G" || modeList.param[mode].ID == "K" || modeList.param[mode].ID == "N") {
@@ -131,7 +141,7 @@ public class ChasePlayer : Player {
 
         if (ID == "G") {
             mode = 1;
-            newColor = new Color(252,0,252,1);
+            newColor = new Color(252, 0, 252, 1);
             Debug.Log("ｺﾞﾘ");
         }
         else if (ID == "K") {
@@ -151,7 +161,7 @@ public class ChasePlayer : Player {
         }
         else if (ID == "N") {
             mode = 0;
-            Debug.Log("ｱｼｸﾋﾞｦｸｼﾞｷﾏｼﾀｰ");        
+            Debug.Log("ｱｼｸﾋﾞｦｸｼﾞｷﾏｼﾀｰ");
         }
 
         if (ID == "G" || ID == "K" || ID == "N") {

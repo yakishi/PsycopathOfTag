@@ -30,9 +30,18 @@ public class EscapePlayer : Player {
     }
 
     // Update is called once per frame
-    public override void FixedUpdate () {
-        
+    public override void Update () {
 
+        if (isDead) {
+            if (!pointFlag) {
+                CmdAddPoint(EnemyTeam(),5);
+            }
+            pointFlag = true;
+            DeadTime();
+        }
+
+        if (!isLocalPlayer) return;
+        
         if (MyInput.OnTrigger() && trapId != "") {
             trapPrefab.GetComponent<Trap>().ID = trapId;
             trapPrefab.GetComponent<Trap>().SetPlayerTeamInfo(team);
@@ -42,15 +51,8 @@ public class EscapePlayer : Player {
         }
 
         
-        if (isDead) {
-            if (!pointFlag) {
-                CmdAddPoint();
-            }
-            pointFlag = true;
-            DeadTime();
-        }
 
-        base.FixedUpdate();
+        base.Update();
     }
 
     void ClearTrapInfo()
@@ -59,12 +61,6 @@ public class EscapePlayer : Player {
         trapPrefab = null;
     }
 
-    [Command]
-    public override void CmdAddPoint()
-    {
-        game.AddPoint(EnemyTeam(), 5);
-        base.CmdAddPoint();
-    }
 
    
     private void OnCollisionEnter(Collision collision)

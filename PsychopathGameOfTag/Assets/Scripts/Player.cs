@@ -119,8 +119,10 @@ public class Player : NetworkBehaviour {
         game = p.game;
     }
 
-    public virtual void FixedUpdate()
+    public virtual void Update()
     {
+        if (!isLocalPlayer) return;
+
         if (Input.GetKeyDown(KeyCode.T)) {
             SceneManager.LoadScene("RESULT");
             DontDestroyOnLoad(GameObject.Find("Game"));
@@ -140,10 +142,11 @@ public class Player : NetworkBehaviour {
             hp = 0;
         }
     }
+
     [Command]
-    public virtual void CmdAddPoint()
+    public void CmdAddPoint(Game.Team enemyTeam,int point)
     {
-        Debug.Log("きた");
+        game.AddPoint(enemyTeam, point);
     }
 
     public void CatchTrap(TrapList.Param trap,GameObject obj)

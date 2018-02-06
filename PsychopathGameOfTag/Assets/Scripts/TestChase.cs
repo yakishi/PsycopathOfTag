@@ -12,7 +12,7 @@ public class TestChase : Player
     }
 
     // Update is calcled once per frame
-    public override void FixedUpdate()
+    public override void Update()
     {
         type = PlayerMode.Escape;
 
@@ -24,7 +24,7 @@ public class TestChase : Player
             pointFlag = true;
         }
 
-        base.FixedUpdate();
+        base.Update();
     }
 
     void ReStart()

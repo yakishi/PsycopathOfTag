@@ -88,7 +88,6 @@ public class Game : MonoBehaviour
             }
         }
 
-        //ui.RpcscoreSync
     }
 
 
