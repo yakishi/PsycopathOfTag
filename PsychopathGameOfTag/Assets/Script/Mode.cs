@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Mode : MonoBehaviour {
-    public int magazine;
+    private int magazine;
     private bool next_bullet = false;
-    public float range;
+    private float range;
     public GameObject muzzle;
-    public float muzzleRadius;
+    public GameObject[] muzzle_Type;
+    private float muzzleRadius;
+    private Vector3 muzzleHalf;
     public ModeList modeList;
     public GameObject nearEnemy;
     public AudioClip[] SE;
@@ -16,7 +18,7 @@ public class Mode : MonoBehaviour {
 
     void Start()
     {
-        muzzleRadius = muzzle.GetComponent<SphereCollider>().radius;
+        muzzleRadius = muzzle_Type[mode].GetComponent<SphereCollider>().radius;
 
         modeList = Resources.Load("ModeList/mode") as ModeList;
 
@@ -42,7 +44,7 @@ public class Mode : MonoBehaviour {
             if (magazine > 0 && !next_bullet)
             {
                 Shoot();
-                audioSource.PlayOneShot(SE[mode], 1.0f);
+                audioSource.PlayOneShot(SE[mode]);
                 magazine--;
                 next_bullet = true;
                 StartCoroutine("Cool_Time");
@@ -52,9 +54,17 @@ public class Mode : MonoBehaviour {
 
     void Shoot()
     {
-        Vector3 cameraCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
-        Ray ray = new Ray(muzzle.transform.position, cameraCenter +new Vector3(range*10.0f, 0, 0));
-        RaycastHit[] hits = Physics.SphereCastAll(ray, muzzleRadius, range, LayerMask.GetMask("Enemy", "Block"));
+        Ray ray = new Ray(muzzle.transform.position, muzzle.transform.forward);
+        RaycastHit[] hits;
+
+        if(modeList.param[mode].ID == "G" || modeList.param[mode].ID == "K" || modeList.param[mode].ID == "N")
+        {
+            hits = Physics.SphereCastAll(ray, muzzleRadius, range, LayerMask.GetMask("Enemy", "Block"));
+        }
+        else
+        {
+            hits = Physics.BoxCastAll(muzzle.transform.position, muzzleHalf/2, muzzle.transform.forward, muzzle.transform.rotation, range, LayerMask.GetMask("Enemy", "Block"));
+        }
 
         float enemyDis = range;
         float blockDis = range;
@@ -96,31 +106,40 @@ public class Mode : MonoBehaviour {
         if(ID=="G")
         {
             mode = 1;
-            range = modeList.param[1].Range;
-            magazine = modeList.param[1].Bullet;
             Debug.Log("ｺﾞﾘ");
         }
         else if (ID == "K")
         {
             mode = 2;
-            range = modeList.param[2].Range;
-            magazine = modeList.param[2].Bullet;
             Debug.Log("ｾｲﾔ");
         }
         else if (ID == "Ks")
         {
             mode = 3;
-            range = modeList.param[3].Range;
-            magazine = modeList.param[3].Bullet;
             Debug.Log("ﾁｬｷ");
         }
         else if (ID == "S")
         {
             mode = 4;
-            range = modeList.param[4].Range;
-            magazine = modeList.param[4].Bullet;
             Debug.Log("ﾊﾟﾙﾌﾟﾝﾃ");
         }
+        else if (ID == "N")
+        {
+            mode = 0;
+            Debug.Log("ｱｼｸﾋﾞｦｸｼﾞｷﾏｼﾀｰ");
+        }
+
+        if (ID == "G" || ID == "K" || ID == "N")
+        {
+            muzzleRadius = muzzle_Type[mode].GetComponent<SphereCollider>().radius;
+        }
+        else
+        {
+            muzzleHalf = muzzle_Type[mode].GetComponent<BoxCollider>().size;
+        }
+
+        range = modeList.param[mode].Range;
+        magazine = modeList.param[mode].Bullet;
     }
 
     IEnumerator Cool_Time()
