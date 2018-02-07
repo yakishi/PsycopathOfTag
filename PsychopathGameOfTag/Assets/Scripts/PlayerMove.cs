@@ -7,6 +7,15 @@ public class PlayerMove : NetworkBehaviour {
 
     Player player;
 
+
+    // Lerpの係数
+    [SerializeField] float m_LerpRate = 4f;
+    // ホストから受信した位置情報
+    Vector3 m_ReceivedPosition;
+
+    // ホストから受信した回転情報
+    Quaternion m_ReceivedRotation;
+
     //[SerializeField]
     //AnimationController animController;
 
@@ -24,6 +33,11 @@ public class PlayerMove : NetworkBehaviour {
 
     void FixedUpdate()
     {
+        if (!hasAuthority) {
+            LerpPosition();
+            return;
+        }
+
         if(player == null) player = gameObject.GetComponent<Player>();
 
         if (player.isDead || player.catchTrap || !isLocalPlayer) return;
@@ -45,5 +59,41 @@ public class PlayerMove : NetworkBehaviour {
         if (player.moveForward != Vector3.zero) {
             transform.rotation = Quaternion.LookRotation(player.moveForward);
         }
+
+        CmdMove(this.transform.position);
+    }
+
+    private void LerpPosition() //補間
+    {
+
+        Vector3 pos = Vector3.Lerp(transform.position, m_ReceivedPosition, m_LerpRate * Time.deltaTime);
+
+        transform.position = pos;
+    }
+
+    [Command]
+    void CmdMove(Vector3 vec3)
+    {
+        foreach (var conn in NetworkServer.connections) {
+            // 無効なConnectionは無視する
+            if (conn == null || !conn.isReady)
+                continue;
+
+            // 自分（情報発信元）に送り返してもしょうがない（というかむしろ有害）なので、
+            // 自分へのConnectionは無視する
+            if (conn == connectionToClient)
+                continue;
+
+            TargetSyncTransform(conn, vec3);
+        }
+    }
+
+    // クライアント側で位置情報を受け取り、オブジェクトに反映させる
+    [TargetRpc]
+    void TargetSyncTransform(NetworkConnection target, Vector3 position)
+    {
+        //transform.SetPositionAndRotation(position, rotation);
+        //transform.position = position;
+        m_ReceivedPosition = position;
     }
 }
