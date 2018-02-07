@@ -6,22 +6,15 @@ using UnityEngine.Networking;
 public class PlayerSpawn :  NetworkBehaviour{
 
     GameObject spawn;
-    GameObject count_obj;
     PlayerSpawn m_Player;
-    public Vector3 resposition;
     private NetworkInstanceId playerNetID;
-
-    bool team;
-    bool shokihantei;
-
 
     public override void OnStartLocalPlayer()
     {
         playerNetID = GetComponent<NetworkIdentity>().netId;
         m_Player = this.gameObject.GetComponent<PlayerSpawn>();
+        Debug.Log(m_Player);
         CmdPlayerSpawn();
-        Debug.Log(spawn.transform.position);
-        shokihantei = false;
     }
 	
 	// Update is called once per frame
@@ -31,25 +24,37 @@ public class PlayerSpawn :  NetworkBehaviour{
     
     void CmdPlayerSpawn()
     {
-        //if (shokihantei == false)
-        //{
-            if (playerNetID.Value % 2 == 1)
+        if (playerNetID.Value % 2 == 1)
+        {
+            spawn = GameObject.Find("red_spawn1");
+            transform.Translate(spawn.transform.position);
+            this.GetComponent<Player>().team = Game.Team.red;
+            if (playerNetID.Value % 4 == 3)
             {
-                spawn = GameObject.Find("bule_spawn1");
-                transform.Translate(spawn.transform.position);
-                team = true;
+                this.GetComponent<Player>().type = Player.PlayerMode.Chase;
+                Debug.Log("3で" + this.GetComponent<Player>().type);
             }
             else
             {
-                spawn = GameObject.Find("red_spawn1");
-                transform.Translate(spawn.transform.position);
-                team = false;
+                this.GetComponent<Player>().type = Player.PlayerMode.Escape;
+                Debug.Log("1で" + this.GetComponent<Player>().type);
             }
-        //}
-    }
-
-    public bool teamhantei()
-    {
-        return team;
+        }
+        else
+        {
+            spawn = GameObject.Find("blue_spawn1");
+            transform.Translate(spawn.transform.position);
+            this.GetComponent<Player>().team = Game.Team.blue;
+            if (playerNetID.Value % 4 == 2)
+            {
+                this.GetComponent<Player>().type = Player.PlayerMode.Chase;
+                Debug.Log("2で" + this.GetComponent<Player>().type);
+            }
+            else
+            {
+                this.GetComponent<Player>().type = Player.PlayerMode.Escape;
+                Debug.Log("4で" + this.GetComponent<Player>().type);
+            }
+        }
     }
 }

@@ -7,8 +7,9 @@ using UnityEngine.UI;
 public class TimeGame : NetworkBehaviour {
 
     Text text;
-
+    public int timelimit;
     private static System.DateTime startTime = System.DateTime.Now;
+    string seconds;
 
     public override void OnStartServer()
     {
@@ -20,7 +21,7 @@ public class TimeGame : NetworkBehaviour {
     {
         if (isLocalPlayer)
         {
-            text = GameObject.Find("MsgText").GetComponent<Text>();
+            text = GameObject.Find("Time").GetComponent<Text>();
         }
     }
     // Update is called once per frame
@@ -38,7 +39,7 @@ public class TimeGame : NetworkBehaviour {
         {
             return;
         }
-        int count = 600 - (int)((System.DateTime.Now - startTime).TotalSeconds);
+        int count = timelimit - (int)((System.DateTime.Now - startTime).TotalSeconds);
 
         RpcSetCount(count);
     }
@@ -46,9 +47,15 @@ public class TimeGame : NetworkBehaviour {
     [ClientRpc]
     void RpcSetCount(int n)
     {
+        seconds = (n % 60).ToString();
+        if (n%60 < 10)
+        {
+            seconds = "0" + (n % 60).ToString();
+        }
+
         if (text != null)
         {
-            text.text = "Time: " + n;
+            text.text = n / 60 + ":" + seconds;
         }
     }
 }

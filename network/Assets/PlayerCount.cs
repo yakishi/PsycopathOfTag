@@ -12,7 +12,7 @@ public class PlayerCount : NetworkBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        //DontDestroyOnLoad(this);
+        DontDestroyOnLoad(this);
         Count = GameObject.Find("PlayerCountText").GetComponent<Text>();
 	}
 

@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 
 public class CustumLobbyPlayer : NetworkLobbyPlayer {
 
     private NetworkInstanceId netID;
     private GameObject player;
-    private CustumLobbyPlayer CLPcs;
-    // Counter;
+
+    Text PlayerState;
 
     public override void OnClientEnterLobby()
     {
@@ -20,9 +21,8 @@ public class CustumLobbyPlayer : NetworkLobbyPlayer {
     {
         base.OnStartClient();
         this.readyToBegin = false;
-        //Counter = GameObject.Find("PlayerCountObject").GetComponent<PlayerCount>();
         netID = GetComponent<NetworkIdentity>().netId;
-        //Counter.CmdCountUP();
+        PlayerState = GameObject.Find("PlayerStateText").GetComponent<Text>();
     }
 
     //private void Start()
@@ -43,15 +43,15 @@ public class CustumLobbyPlayer : NetworkLobbyPlayer {
         if (Input.GetKeyDown(KeyCode.K))
         {
             StateChange();
-            //Debug.Log(Counter);
-            if (ShowLobbyGUI == true)
-            {
-                ShowLobbyGUI = false;
-            }
-            else
-            {
-                ShowLobbyGUI = true;
-            }
+        }
+
+        if (!this.readyToBegin)
+        {
+            PlayerState.text = "準備中";
+        }
+        else
+        {
+            PlayerState.text = "準備完了";
         }
     }
     public override void OnClientReady(bool readyState) //これでゲームの開始の判定をする
@@ -85,8 +85,7 @@ public class CustumLobbyPlayer : NetworkLobbyPlayer {
     public void StateChange()      //プレイヤーの準備状態の変化
     {
         player = GameObject.Find("Player" + netID);
-        CLPcs = player.GetComponent<CustumLobbyPlayer>();
-        CLPcs.ReadyStateButton();
+        ReadyStateButton();
     }
 
     public void ReadyStateButton()
@@ -95,6 +94,7 @@ public class CustumLobbyPlayer : NetworkLobbyPlayer {
         {
             return;
         }
+
         if (this.readyToBegin == true)
         {
             this.readyToBegin = false;

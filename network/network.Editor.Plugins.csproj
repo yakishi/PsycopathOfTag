@@ -277,25 +277,39 @@
     <Reference Include="UnityEditor.iOS.Extensions.Common">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Common.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>Assets\yakisi\Assets\Terasurware\Editor\npoi\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI">
+      <HintPath>Assets\yakisi\Assets\Terasurware\Editor\npoi\NPOI.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OOXML">
+      <HintPath>Assets\yakisi\Assets\Terasurware\Editor\npoi\NPOI.OOXML.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net">
+      <HintPath>Assets\yakisi\Assets\Terasurware\Editor\npoi\NPOI.OpenXml4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats">
+      <HintPath>Assets\yakisi\Assets\Terasurware\Editor\npoi\NPOI.OpenXmlFormats.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-UnityScript">
       <HintPath>Library\ScriptAssemblies\Assembly-UnityScript.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="network.Plugins.csproj">
-      <Project>{3F0EBAAB-50B9-B19D-E542-E65903EB3832}</Project>
-      <Name>network.Plugins</Name>
-    </ProjectReference>
     <ProjectReference Include="network.csproj">
       <Project>{0AF89C58-930B-FE5F-FB7F-DEB6ACB15F5B}</Project>
       <Name>network</Name>
+    </ProjectReference>
+    <ProjectReference Include="network.Plugins.csproj">
+      <Project>{3F0EBAAB-50B9-B19D-E542-E65903EB3832}</Project>
+      <Name>network.Plugins</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Standard Assets\Editor\CrossPlatformInput\CrossPlatformInputInitialize.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Plugins\UniRx\ReadMe.txt" />
     <None Include="Assets\Standard Assets\Characters\FirstPersonCharacter\FirstPersonCharacterGuidelines.txt" />
     <None Include="Assets\Standard Assets\Characters\RollerBall\RollerBallGuidelines.txt" />
     <None Include="Assets\Standard Assets\Characters\ThirdPersonCharacter\ThirdPersonCharacterGuidelines.txt" />
@@ -373,6 +387,14 @@
     <None Include="Assets\stage\stage3\Assets\ZRNAssets\license_en.txt" />
     <None Include="Assets\stage\stage3\Assets\ZRNAssets\license_jp.txt" />
     <None Include="Assets\stage\stage3\Assets\_Barking_Dog\Readme_Please.txt" />
+    <None Include="Assets\yakisi\Assets\Plugins\UniRx\ReadMe.txt" />
+    <None Include="Assets\yakisi\Assets\Terasurware\Editor\EntityTemplate.txt" />
+    <None Include="Assets\yakisi\Assets\Terasurware\Editor\EntityTemplate2.txt" />
+    <None Include="Assets\yakisi\Assets\Terasurware\Editor\ExportTemplate.txt" />
+    <None Include="Assets\yakisi\Assets\Terasurware\Editor\ExportTemplate2.txt" />
+    <None Include="Assets\yakisi\Assets\Terasurware\Editor\npoi\NPOI.OOXML.XML" />
+    <None Include="Assets\yakisi\Assets\Terasurware\Editor\npoi\NPOI.OpenXml4Net.XML" />
+    <None Include="Assets\yakisi\Assets\Terasurware\Editor\npoi\NPOI.XML" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

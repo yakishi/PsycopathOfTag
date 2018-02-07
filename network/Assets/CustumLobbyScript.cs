@@ -10,8 +10,12 @@ using System;
 public class CustumLobbyScript : NetworkLobbyManager {
     public PlayerCount PC_cs;
     GameObject netPlayer;
-    NetworkLobbyPlayer player;
+    CustumLobbyPlayer player;
+    NetworkClient Client;
+    NetworkLobbyPlayer hoge;
     NetworkLobbyManager NLM;
+    private NetworkInstanceId netID;
+
     int stage1, stage2, stage3;
     bool StageSelect;
 
@@ -36,22 +40,30 @@ public class CustumLobbyScript : NetworkLobbyManager {
         stage1 = stage2 = stage3 = 0;
     }
 
+    public override void OnLobbyStartClient(NetworkClient lobbyClient)
+    {
+        base.OnLobbyStartClient(lobbyClient);
+        Client = lobbyClient;
+        //hoge = lobbySlots[lobbyClient.connection.connectionId];
+        //Debug.Log("startClient:" + lobbyClient.connection.connectionId);
+        //Debug.Log(hoge);
+    }
     public override void OnClientConnect(NetworkConnection conn)
     {
         base.OnClientConnect(conn);
-        //PlayerCount++;
-        netPlayer = GameObject.Find("Player"+ (conn.connectionId + 1));
-        NetworkLobbyPlayer hoge =  lobbySlots[conn.connectionId];
+        //netID = GetComponent<NetworkIdentity>().netId;
+        //netPlayer = GameObject.Find("Player"+ (conn.connectionId + 1));
+        //hoge =  lobbySlots[conn.connectionId];
+        //Debug.Log(hoge);
+        //Debug.Log(lobbySlots[netID.Value]);
+        //hoge = lobbySlots[Client.connection.connectionId];
+        //Debug.Log("CL:"+hoge);
     }
 
     public override void OnLobbyClientEnter()
     {
         Debug.Log("入室");
         base.OnLobbyClientEnter();
-        //PC_cs = GameObject.Find("PlayerCountObject").GetComponent<PlayerCount>();
-        //PC = GameObject.Find("PlayerCountText").GetComponent<Text>();
-        //PC_cs.CmdCountUP();
-        //Debug.Log(PC_cs.CountReturn());
     }
 
     public override void OnLobbyStopClient()
@@ -97,9 +109,15 @@ public class CustumLobbyScript : NetworkLobbyManager {
             }
         }else if (Input.GetKeyDown(KeyCode.D))
         {
-            Debug.Log(PC_cs.CountReturn());
-            player.OnClientReady(true);
+            //player.OnClientReady(true);
+            //player.StateChange();
         }
+    }
+
+    public void StateChange()
+    {
+        
+        //hoge.GetComponent<CustumLobbyPlayer>().StateChange();
     }
 
     public void Clientstop()
