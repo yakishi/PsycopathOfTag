@@ -39,23 +39,53 @@ public class Game : NetworkBehaviour
     [SerializeField]
     float limitTime;
 
-    Dictionary<Team, int> team;
-    public Dictionary<Team, int> getTeam
-    {
-        get
-        {
-            return team;
-        }
+    //static Dictionary<Team, int> team = new Dictionary<Team, int>();
+    //static public Dictionary<Team, int> getTeam
+    //{
+    //    get
+    //    {
+    //        return team;
+    //    }
 
-        set
-        {
-            team = value;
-        }
-    }
+    //    set
+    //    {
+    //        team = value;
+    //    }
+    //}
 
-    public override void OnStartServer()
+    [SyncVar]
+    int red;
+    [SyncVar]
+    int blue;
+
+    public void Start()
     {
-        game = this;
+        //if (isServer) {
+        //    game = this;
+        //    GameStart();
+
+        //    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        //    ui = GameObject.Find("Canvas").GetComponent<UIController>();
+        //    ui.SetGame();
+
+        //    foreach (var i in players) {
+        //        i.GetComponent<Player>().SetGame(game);
+        //    }
+        //    return;
+        //}
+        //if (isClient) {
+        //    GameStart();
+
+        //    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        //    ui = GameObject.Find("Canvas").GetComponent<UIController>();
+        //    ui.SetGame();
+
+        //    foreach (var i in players) {
+        //        i.GetComponent<Player>().SetGame(game);
+        //    }
+        //}
+
+         game = this;
         GameStart();
 
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
@@ -65,51 +95,26 @@ public class Game : NetworkBehaviour
         foreach (var i in players) {
             i.GetComponent<Player>().SetGame(game);
         }
+        return;
+
         base.OnStartServer();
     }
 
-    //private void Start()
-    //{
-    //    game = this;
-    //    GameStart();
-
-    //    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-    //    ui = GameObject.Find("Canvas").GetComponent<UIController>();
-    //    ui.SetGame();
-
-    //    foreach (var i in players) {
-    //        i.GetComponent<Player>().SetGame(game);
-    //    }
-    //}
-
-    // Use this for initialization
-    //public override void OnStartLocalPlayer()
-    //{
-    //    GameStart();
-
-    //    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-
-    //    foreach (var i in players) {
-    //        i.GetComponent<Player>().SetGame(game);
-    //    }
-    //    base.OnStartLocalPlayer();
-    //}
 
     void GameStart()
     {
         timer = new Timer(limitTime);
-        team = new Dictionary<Team, int>();
-        team.Add(Team.red, 0);
-        team.Add(Team.blue, 0);
-
+        red = 0;
+        blue = 0;
     }
 
+ 
     // Update is called once per frame
     void Update()
     {
-        if (timer.isRunning()) {
-            timer.Update();
-        }
+        //if (timer.isRunning()) {
+        //    timer.Update();
+        //}
 
         if (!isServer) return;
 
@@ -122,27 +127,28 @@ public class Game : NetworkBehaviour
 
     public int getTeamPoint(Team side)
     {
-        return team[side];
+        if (side == Team.red) {
+            return red;
+            
+        }
+
+        return blue;
     }
 
     [ClientRpc]
     public void RpcSendPointText()
     {
-        ui.Points.text = "<color=#ff0000>" + team[Game.Team.red] + "</color> / " + "<color=#0000ff>" + team[Game.Team.blue] + "</color>";
+        ui.Points.text = "<color=#ff0000>" + red + "</color> / " + "<color=#0000ff>" + blue + "</color>";
     }
 
+    public void AddPoint(Team side, int point)
+    {
+        if (side == Team.red) {
+            red += point;
+            return;
+        }
 
-
-    //public void AddPoint(Team side, int point)
-    //{
-    //    List<Team> list = new List<Team>(team.Keys);
-    //
-    //    foreach (var t in list) {
-    //        if (t == side) {
-    //            team[t] += point;
-    //        }
-    //    }
-    //}
-
-
+        blue += point;
+        
+    }
 }

@@ -41,7 +41,7 @@ public class Result : MonoBehaviour {
 
         buttons[1].OnClickAsObservable()
             .Subscribe(_ => {
-                SceneManager.LoadScene("TITLE");
+                SceneManager.LoadScene("Psychopath Title");
             })
             .AddTo(this);
 

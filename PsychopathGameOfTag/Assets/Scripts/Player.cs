@@ -138,7 +138,7 @@ public class Player : NetworkBehaviour {
     [Command]
     public void CmdAddPoint(Game.Team enemyTeam,int point)
     {
-        Game.getGame.getTeam[enemyTeam] += point;
+        Game.getGame.AddPoint(enemyTeam,point);
     }
 
     public void CatchTrap(TrapList.Param trap,GameObject obj)
