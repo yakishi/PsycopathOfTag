@@ -22,6 +22,17 @@ public class UIController : MonoBehaviour {
 
     [SerializeField]
     Text points;
+    public Text Points
+    {
+        get
+        {
+            return points;
+        }
+        set
+        {
+            points = value;
+        }
+    }
 
     [SerializeField]
     Image modeImg;
@@ -39,14 +50,17 @@ public class UIController : MonoBehaviour {
         player = p;
     }
 
+    public void SetGame()
+    {
+        game = Game.getGame;
+    }
+
 	// Update is called once per frame
 	void Update () {
         if (player == null) return;
 
         TeamIconDisplayer();
         if(player.Type == Player.PlayerMode.Chase)  modeImg.sprite = WeaponImage(player.getMode);
-
-        points.text = "<color=#ff0000>" + game.getTeamPoint(Game.Team.red) + "</color> / " + "<color=#0000ff>" + game.getTeamPoint(Game.Team.blue) + "</color>";
     }
 
     Sprite WeaponImage(int mode)

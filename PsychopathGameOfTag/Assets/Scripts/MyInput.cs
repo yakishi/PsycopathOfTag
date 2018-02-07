@@ -40,6 +40,11 @@ public class MyInput{
         return TriggerAxis() <= -0.9f;
     }
 
+    public static bool IsReady()
+    {
+        return Input.GetAxis("Ready") >= 0.5f || Input.GetKeyDown(KeyCode.K);
+    }
+
     public static Vector3 Direction()
     {
         Vector3 ret = Vector3.zero;

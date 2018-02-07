@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 
-public class Game : MonoBehaviour
+public class Game : NetworkBehaviour
 {
 
     public enum Team
@@ -19,6 +19,16 @@ public class Game : MonoBehaviour
     }
 
     static Game game;
+    static public Game getGame
+    {
+        get
+        {
+            return game;
+        }
+    }
+
+    [SerializeField]
+    UIController ui;
 
     /// <summary>
     /// タイマー
@@ -30,18 +40,47 @@ public class Game : MonoBehaviour
     float limitTime;
 
     Dictionary<Team, int> team;
+    public Dictionary<Team, int> getTeam
+    {
+        get
+        {
+            return team;
+        }
 
-    private void Start()
+        set
+        {
+            team = value;
+        }
+    }
+
+    public override void OnStartServer()
     {
         game = this;
         GameStart();
 
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        ui = GameObject.Find("Canvas").GetComponent<UIController>();
+        ui.SetGame();
 
         foreach (var i in players) {
             i.GetComponent<Player>().SetGame(game);
         }
+        base.OnStartServer();
     }
+
+    //private void Start()
+    //{
+    //    game = this;
+    //    GameStart();
+
+    //    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+    //    ui = GameObject.Find("Canvas").GetComponent<UIController>();
+    //    ui.SetGame();
+
+    //    foreach (var i in players) {
+    //        i.GetComponent<Player>().SetGame(game);
+    //    }
+    //}
 
     // Use this for initialization
     //public override void OnStartLocalPlayer()
@@ -71,6 +110,14 @@ public class Game : MonoBehaviour
         if (timer.isRunning()) {
             timer.Update();
         }
+
+        if (!isServer) return;
+
+
+        if (ui != null) {
+            RpcSendPointText();
+        }
+
     }
 
     public int getTeamPoint(Team side)
@@ -78,17 +125,24 @@ public class Game : MonoBehaviour
         return team[side];
     }
 
-    public void AddPoint(Team side, int point)
+    [ClientRpc]
+    public void RpcSendPointText()
     {
-        List<Team> list = new List<Team>(team.Keys);
-
-        foreach (var t in list) {
-            if (t == side) {
-                team[t] += point;
-            }
-        }
-
+        ui.Points.text = "<color=#ff0000>" + team[Game.Team.red] + "</color> / " + "<color=#0000ff>" + team[Game.Team.blue] + "</color>";
     }
+
+
+
+    //public void AddPoint(Team side, int point)
+    //{
+    //    List<Team> list = new List<Team>(team.Keys);
+    //
+    //    foreach (var t in list) {
+    //        if (t == side) {
+    //            team[t] += point;
+    //        }
+    //    }
+    //}
 
 
 }

@@ -84,16 +84,8 @@ public class Player : NetworkBehaviour {
         Initialize();
     }
 
-    public override void OnStartServer()
-    {
-        Initialize();
-        base.OnStartServer();
-    }
-
     protected void Initialize()
     {
-        game = GameObject.Find("Game").GetComponent<Game>();
-
         mainCamera = GameObject.Find("Main Camera").GetComponent<MainCamera>();
         uIController = GameObject.Find("Canvas").GetComponent<UIController>();
 
@@ -146,7 +138,7 @@ public class Player : NetworkBehaviour {
     [Command]
     public void CmdAddPoint(Game.Team enemyTeam,int point)
     {
-        game.AddPoint(enemyTeam, point);
+        Game.getGame.getTeam[enemyTeam] += point;
     }
 
     public void CatchTrap(TrapList.Param trap,GameObject obj)

@@ -20,10 +20,12 @@ public class TimeGUI : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         timer = Game.Timer;
+        timeText = GameObject.Find("Time").GetComponent<Text>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
         timer = Game.Timer;
 
         timeText.text = Conversion(timer.RemainTime);

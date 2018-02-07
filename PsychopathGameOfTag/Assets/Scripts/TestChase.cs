@@ -18,7 +18,7 @@ public class TestChase : Player
 
         if (isDead) {
             if (!pointFlag) {
-                game.AddPoint(EnemyTeam(), 5);
+                CmdAddPoint(EnemyTeam(), 5);
                 ReStart();
             }
             pointFlag = true;
