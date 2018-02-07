@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class EscapePlayer : Player {
+public class EscapePlayer : NetworkBehaviour {
+
+    Player player;
 
     private GameObject trapPrefab;
     public GameObject setTrapPrefab
@@ -17,43 +19,40 @@ public class EscapePlayer : Player {
     public string trapId;
 
     public override void OnStartLocalPlayer()
-    {
-        type = PlayerMode.Escape;
-        trapId = "";
+    {       
+        StartEscapePlayer();
 
         base.OnStartLocalPlayer();
     }
 
-    public override void ChangeType(Player p)
+    public void StartEscapePlayer()
     {
-        base.ChangeType(p);
+        trapId = "";
+        player = GetComponent<Player>();
     }
 
     // Update is called once per frame
-    public override void Update () {
+    public void Update () {
 
         if (!isLocalPlayer) return;
 
-        if (isDead) {
-            if (!pointFlag) {
-                CmdAddPoint(EnemyTeam(),5);
+        if (player.isDead) {
+            if (!player.pointFlag) {
+                player.CmdAddPoint(player.EnemyTeam(),5);
+                player.pointFlag = true;
             }
-            pointFlag = true;
-            DeadTime();
+            player.DeadTime();
         }
 
         
         if (MyInput.OnTrigger() && trapId != "") {
             trapPrefab.GetComponent<Trap>().ID = trapId;
-            trapPrefab.GetComponent<Trap>().SetPlayerTeamInfo(team);
-            Instantiate(trapPrefab, new Vector3(transform.position.x + -moveForward.x, -0.5f, transform.position.z + -moveForward.z), Quaternion.identity);
+            trapPrefab.GetComponent<Trap>().SetPlayerTeamInfo(player.team);
+            Instantiate(trapPrefab, new Vector3(transform.position.x + -player.moveForward.x, -0.5f, transform.position.z + -player.moveForward.z), Quaternion.identity);
 
             ClearTrapInfo();
         }
 
-        
-
-        base.Update();
     }
 
     void ClearTrapInfo()
@@ -68,9 +67,9 @@ public class EscapePlayer : Player {
     {
         if (collision.gameObject.tag == "Player") {
 
-            Player player = collision.gameObject.GetComponent<Player>();
+            Player colPlayer = collision.gameObject.GetComponent<Player>();
 
-            if (player.Type == PlayerMode.Chase && player.team == this.team) {
+            if (player.Type == Player.PlayerMode.Chase && colPlayer.team == player.team) {
 
                 ChasePlayer chaser = collision.gameObject.GetComponent<ChasePlayer>();
                 foreach (Transform n in this.gameObject.transform) {

@@ -22,7 +22,6 @@ public class Player : NetworkBehaviour {
             return type;
         }
     }
-    protected GameObject player;
 
     [SerializeField]
     protected int hp;
@@ -44,6 +43,8 @@ public class Player : NetworkBehaviour {
 
     [SerializeField]
     protected Game game;
+
+    protected Player player;
 
     NetworkInstanceId id;
     public NetworkInstanceId ID
@@ -72,69 +73,67 @@ public class Player : NetworkBehaviour {
     [SyncVar]
     public Game.Team team;
 
-    public ModeList modeList;
-    [SerializeField]
-    public MuzzleType muzzle_Type;
-
-    protected bool pointFlag;
+    public bool pointFlag;
 
     public bool catchTrap;
 
     private MainCamera mainCamera;
     private UIController uIController;
 
-    protected int mode = 0;
-    public int getMode
-    {
-        get
-        {
-            return mode;
-        }
-    }
+    public bool killEnemy;
 
-    protected bool killEnemy;
+    public bool isChange;
 
     public override void OnStartLocalPlayer()
     {
-        id = GetComponent<NetworkIdentity>().netId;
-        game = Game.getGame;
+      
         Initialize();
-
     }
 
     protected void Initialize()
     {
+        game = Game.getGame;
+        id = GetComponent<NetworkIdentity>().netId;
         mainCamera = GameObject.Find("Main Camera").GetComponent<MainCamera>();
         uIController = GameObject.Find("Canvas").GetComponent<UIController>();
 
         mainCamera.SetPlayer(gameObject);
         uIController.SetPlayer(this);
 
-        player = this.gameObject;
-        respownTime = 5;
         hp = 10;
-        time = new Timer(respownTime);
+        respownTime = 5;
         pointFlag = false;
         catchTrap = false;
         killEnemy = false;
+        isChange = false;
+        time = new Timer(respownTime);
     }
 
-    public void SetGame(Game g)
+    public void ChangeType()
     {
-        game = g;
-    }
+        switch (type) {
+            case PlayerMode.Chase:
+                gameObject.AddComponent<ChasePlayer>().StartChasePlayer();
+                Destroy(gameObject.GetComponent<EscapePlayer>());
+                break;
+            case PlayerMode.Escape:
+                gameObject.AddComponent<EscapePlayer>().StartEscapePlayer();
+                Destroy(gameObject.GetComponent<ChasePlayer>());
+                break;
+            default:
+                return;
+        }
 
-    public virtual void ChangeType(Player p)
-    {
-        Initialize();
-        game = p.game;
+        Initialize();       
     }
 
     public virtual void Update()
     {
-        game.UpdatePlayers(this);
 
         if (!isLocalPlayer) return;
+
+
+        CmdSendPlayer();
 
         if (killEnemy) {
             DeadTime();
@@ -149,6 +148,12 @@ public class Player : NetworkBehaviour {
         if (Input.GetKeyDown(KeyCode.C)) {
             hp = 0;
         }
+    }
+
+    [Command]
+    public void CmdSendPlayer()
+    {
+        Game.getGame.UpdatePlayers(this);
     }
 
     [Command]
@@ -225,24 +230,23 @@ public class Player : NetworkBehaviour {
         return temp;
     }
 
-    protected void DeadTime()
+    public void DeadTime()
     {
+        if (time == null) return;
+
         time.Update();
 
         if (time.RemainTime <= 0) {
+
             switch (type) {
                 case PlayerMode.Chase:
                     type = PlayerMode.Escape;
-                    gameObject.AddComponent<ChasePlayer>().ChangeType(this);
-                    Destroy(gameObject.GetComponent<EscapePlayer>());
                     break;
                 case PlayerMode.Escape:
                     type = PlayerMode.Chase;
-                    gameObject.AddComponent<EscapePlayer>().ChangeType(this);
-                    Destroy(gameObject.GetComponent<ChasePlayer>());
                     break;
                 default:
-                    return;
+                    break;
             }
 
             foreach (Transform n in this.gameObject.transform) {
@@ -251,10 +255,12 @@ public class Player : NetworkBehaviour {
                 }
             }
 
-            hp = 10;
             pointFlag = false;
+            catchTrap = false;
             killEnemy = false;
+            isChange = true;
             time.Reset();
+
         }
     }
 

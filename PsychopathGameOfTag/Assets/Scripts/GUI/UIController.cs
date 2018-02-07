@@ -7,9 +7,6 @@ using UnityEngine.Networking;
 public class UIController : MonoBehaviour {
 
     [SerializeField]
-    Game game;
-
-    [SerializeField]
     Sprite redImage;
     [SerializeField]
     Sprite blueImage;
@@ -50,17 +47,12 @@ public class UIController : MonoBehaviour {
         player = p;
     }
 
-    public void SetGame()
-    {
-        game = Game.getGame;
-    }
-
 	// Update is called once per frame
 	void Update () {
         if (player == null) return;
 
         TeamIconDisplayer();
-        if(player.Type == Player.PlayerMode.Chase)  modeImg.sprite = WeaponImage(player.getMode);
+        if(player.Type == Player.PlayerMode.Chase)  modeImg.sprite = WeaponImage(player.gameObject.GetComponent<ChasePlayer>().GetMode);
     }
 
     Sprite WeaponImage(int mode)

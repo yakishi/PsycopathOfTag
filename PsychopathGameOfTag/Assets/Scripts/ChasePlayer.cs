@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class ChasePlayer : Player
+public class ChasePlayer : NetworkBehaviour
 {
+    Player player;
+
     public int magazine;
     private bool next_bullet = false;
     public float range;
+
+    public ModeList modeList;
+    [SerializeField]
+    public MuzzleType muzzle_Type;
     public GameObject muzzle;
     public float muzzleRadius;
     private Vector3 muzzleHalf;
@@ -16,10 +22,24 @@ public class ChasePlayer : Player
     private AudioClip[] SE;
     AudioSource audioSource;
 
+    private int mode = 0;
+    public int GetMode
+    {
+        get
+        {
+            return mode;
+        }
+    }
+
     public override void OnStartLocalPlayer()
     {
-        type = PlayerMode.Chase;
+        StartChasePlayer();
         base.OnStartLocalPlayer();
+    }
+
+    public void Start()
+    {
+        StartChasePlayer();
     }
 
 
@@ -41,29 +61,20 @@ public class ChasePlayer : Player
         }
     }
 
-    public override void ChangeType(Player p)
-    {
-        modeList = p.modeList;
-        muzzle_Type = p.muzzle_Type;
+    public void StartChasePlayer()
+    { 
         muzzle = GameObject.Find("Head"); ;
         muzzleRadius = muzzle_Type.muzzTypeList[mode].GetComponent<SphereCollider>().radius;
-
-
-        base.ChangeType(p);
+        range = modeList.param[0].Range;
+        magazine = modeList.param[0].Bullet;
+        player = GetComponent<Player>();
     }
 
     // Update is called once per frame
-    public override void Update()
+    public void Update()
     {
         if (!isLocalPlayer) return;
 
-        if (isDead) {
-            if (!pointFlag) {
-                CmdAddPoint(EnemyTeam(), 3);
-                pointFlag = true;
-            }
-            DeadTime();
-        }
 
 
         if (MyInput.OnTrigger()) {
@@ -92,12 +103,23 @@ public class ChasePlayer : Player
             Change_Mode("S");
         }
 
-        base.Update();
+        if (player.isDead) {
+            if (!player.pointFlag) {
+                player.CmdAddPoint(player.EnemyTeam(), 3);
+                player.pointFlag = true;
+            }
+
+            player.DeadTime();
+        }
+        if (player.isChange) {
+            player.ChangeType();
+            return;
+        }
     }
 
     void Shoot()
     {
-        Ray ray = new Ray(player.transform.position, cameraForward);
+        Ray ray = new Ray(transform.position, player.cameraForward);
         RaycastHit[] hits;
 
         if (modeList.param[mode].ID == "G" || modeList.param[mode].ID == "K" || modeList.param[mode].ID == "N") {
@@ -120,7 +142,7 @@ public class ChasePlayer : Player
         }
 
         foreach (RaycastHit hit in hits) {
-            if (hit.collider.gameObject.GetComponent<Player>().team != this.team && hit.distance < blockDis && hit.distance < enemyDis) {
+            if (hit.collider.gameObject.GetComponent<Player>().team != player.team && hit.distance < blockDis && hit.distance < enemyDis) {
                 enemyDis = hit.distance;
                 nearEnemy = hit.collider.gameObject.GetComponent<Player>();
             }
@@ -130,7 +152,7 @@ public class ChasePlayer : Player
             nearEnemy.CmdHitBullet(modeList.param[mode].Power);
 
             if (nearEnemy.isDead) {
-                killEnemy = true;
+                player.killEnemy = true;
             }
             Debug.Log("hit");
         }

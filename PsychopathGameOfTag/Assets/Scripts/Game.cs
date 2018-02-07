@@ -41,20 +41,6 @@ public class Game : NetworkBehaviour
 
     static private List<Player> players = new List<Player>();
 
-    //static Dictionary<Team, int> team = new Dictionary<Team, int>();
-    //static public Dictionary<Team, int> getTeam
-    //{
-    //    get
-    //    {
-    //        return team;
-    //    }
-
-    //    set
-    //    {
-    //        team = value;
-    //    }
-    //}
-
     [SyncVar]
     int red;
     [SyncVar]
@@ -67,14 +53,8 @@ public class Game : NetworkBehaviour
 
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         ui = GameObject.Find("Canvas").GetComponent<UIController>();
-        ui.SetGame();
 
-        foreach (var i in players) {
-            i.GetComponent<Player>().SetGame(game);
-        }
         return;
-
-        base.OnStartServer();
     }
 
 
@@ -95,7 +75,7 @@ public class Game : NetworkBehaviour
 
         if (!isServer) return;
 
-        RpcSendPlayerInfo();
+        CheckPlayer();
 
         if (ui != null) {
             RpcSendPointText();
@@ -129,36 +109,30 @@ public class Game : NetworkBehaviour
         return blue;
     }
 
-    [ClientRpc]
-    public void RpcSendPlayerInfo()
+    void CheckPlayer()
     {
         GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
 
-        Debug.Log(players.Count);
-
-        for(int i = 0;i < playerObjects.Length; i++) {
-            for(int j= 0; j < players.Count; j++) {
+        for (int i = 0; i < playerObjects.Length; i++) {
+            for (int j = 0; j < players.Count; j++) {
                 Player pObj = playerObjects[i].GetComponent<Player>();
 
                 if (players[j].ID != pObj.ID) continue;
-                
-                if(players[j].Type != pObj.Type) {
-                    switch (players[j].Type) {
-                        case Player.PlayerMode.Chase:
-                            playerObjects[i].AddComponent<ChasePlayer>().ChangeType(players[j]);
-                            Destroy(playerObjects[i].GetComponent<EscapePlayer>());
-                            break;
-                        case Player.PlayerMode.Escape:
-                            playerObjects[i].AddComponent<EscapePlayer>().ChangeType(players[j]);
-                            Destroy(playerObjects[i].GetComponent<ChasePlayer>());
-                            break;
-                        default:
-                            break;
-                    }
+
+
+                if (players[j].Type != pObj.Type) {
+                    RpcSendPlayerInfo(j);
+
                 }
-                
+
             }
         }
+    }
+
+    [ClientRpc]
+    public void RpcSendPlayerInfo(int i)
+    {
+        players[i].ChangeType();
     }
 
     [ClientRpc]

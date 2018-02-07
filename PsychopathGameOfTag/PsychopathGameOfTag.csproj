@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2017.2.0p1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -234,7 +232,6 @@
     <Compile Include="Assets\Scene\TrapTest\_Creepy_Cat\3D Games Effects Pack Free\Example_02\InstanceExample.cs" />
     <Compile Include="Assets\Scene\TrapTest\KY_effects\Script\ConGUI.cs" />
     <Compile Include="Assets\Scene\TrapTest\KY_effects\Script\Lighting.cs" />
-    <Compile Include="Assets\Scripts\Game.cs" />
     <Compile Include="Assets\Script\Mode.cs" />
     <Compile Include="Assets\Script\Status.cs" />
     <Compile Include="Assets\Script\Trap.cs" />
@@ -243,6 +240,7 @@
     <Compile Include="Assets\Scripts\ChasePlayer.cs" />
     <Compile Include="Assets\Scripts\Credit\Credit.cs" />
     <Compile Include="Assets\Scripts\EscapePlayer.cs" />
+    <Compile Include="Assets\Scripts\Game.cs" />
     <Compile Include="Assets\Scripts\GUI\TimeGUI.cs" />
     <Compile Include="Assets\Scripts\GUI\Timer.cs" />
     <Compile Include="Assets\Scripts\GUI\UIController.cs" />
