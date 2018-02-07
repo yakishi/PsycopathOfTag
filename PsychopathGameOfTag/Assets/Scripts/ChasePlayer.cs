@@ -55,6 +55,7 @@ public class ChasePlayer : Player
     // Update is called once per frame
     public override void Update()
     {
+        if (!isLocalPlayer) return;
 
         if (isDead) {
             if (!pointFlag) {
@@ -64,7 +65,6 @@ public class ChasePlayer : Player
             DeadTime();
         }
 
-        if (!isLocalPlayer) return;
 
         if (MyInput.OnTrigger()) {
             if (magazine == 0) {
@@ -72,7 +72,7 @@ public class ChasePlayer : Player
             }
 
             if (magazine > 0 && !next_bullet) {
-                CmdShoot();
+                Shoot();
                 magazine--;
                 next_bullet = true;
                 StartCoroutine("Cool_Time");
@@ -95,8 +95,7 @@ public class ChasePlayer : Player
         base.Update();
     }
 
-    [Command]
-    void CmdShoot()
+    void Shoot()
     {
         Ray ray = new Ray(player.transform.position, cameraForward);
         RaycastHit[] hits;
@@ -129,6 +128,10 @@ public class ChasePlayer : Player
 
         if (nearEnemy != null) {
             nearEnemy.CmdHitBullet(modeList.param[mode].Power);
+
+            if (nearEnemy.isDead) {
+                killEnemy = true;
+            }
             Debug.Log("hit");
         }
 

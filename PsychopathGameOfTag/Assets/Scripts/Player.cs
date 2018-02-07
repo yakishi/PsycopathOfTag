@@ -45,6 +45,19 @@ public class Player : NetworkBehaviour {
     [SerializeField]
     protected Game game;
 
+    NetworkInstanceId id;
+    public NetworkInstanceId ID
+    {
+        get
+        {
+            return id;
+        }
+        set
+        {
+            id = value;
+        }
+    }
+
     protected Timer time;
 
     protected float respownTime;
@@ -79,9 +92,14 @@ public class Player : NetworkBehaviour {
         }
     }
 
+    protected bool killEnemy;
+
     public override void OnStartLocalPlayer()
     {
+        id = GetComponent<NetworkIdentity>().netId;
+        game = Game.getGame;
         Initialize();
+
     }
 
     protected void Initialize()
@@ -98,6 +116,7 @@ public class Player : NetworkBehaviour {
         time = new Timer(respownTime);
         pointFlag = false;
         catchTrap = false;
+        killEnemy = false;
     }
 
     public void SetGame(Game g)
@@ -113,7 +132,14 @@ public class Player : NetworkBehaviour {
 
     public virtual void Update()
     {
+        game.UpdatePlayers(this);
+
         if (!isLocalPlayer) return;
+
+        if (killEnemy) {
+            DeadTime();
+        }
+
 
         if (Input.GetKeyDown(KeyCode.T)) {
             SceneManager.LoadScene("RESULT");
@@ -129,7 +155,6 @@ public class Player : NetworkBehaviour {
     public void CmdHitBullet(int damage)
     {
         hp -=damage;
-        Debug.Log(gameObject.name + " HP : " + hp);
         if(hp <= 0) {
             hp = 0;
         }
@@ -207,16 +232,14 @@ public class Player : NetworkBehaviour {
         if (time.RemainTime <= 0) {
             switch (type) {
                 case PlayerMode.Chase:
-                    Destroy(GetComponent<ChasePlayer>());
-                    player.AddComponent<EscapePlayer>();
-                    player.GetComponent<EscapePlayer>().ChangeType(this);
                     type = PlayerMode.Escape;
+                    gameObject.AddComponent<ChasePlayer>().ChangeType(this);
+                    Destroy(gameObject.GetComponent<EscapePlayer>());
                     break;
                 case PlayerMode.Escape:
-                    Destroy(GetComponent<EscapePlayer>());
-                    player.AddComponent<ChasePlayer>();
-                    player.GetComponent<ChasePlayer>().ChangeType(this);
                     type = PlayerMode.Chase;
+                    gameObject.AddComponent<EscapePlayer>().ChangeType(this);
+                    Destroy(gameObject.GetComponent<ChasePlayer>());
                     break;
                 default:
                     return;
@@ -228,8 +251,9 @@ public class Player : NetworkBehaviour {
                 }
             }
 
-            hp = 20;
+            hp = 10;
             pointFlag = false;
+            killEnemy = false;
             time.Reset();
         }
     }

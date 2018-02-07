@@ -39,6 +39,8 @@ public class Game : NetworkBehaviour
     [SerializeField]
     float limitTime;
 
+    static private List<Player> players = new List<Player>();
+
     //static Dictionary<Team, int> team = new Dictionary<Team, int>();
     //static public Dictionary<Team, int> getTeam
     //{
@@ -60,32 +62,7 @@ public class Game : NetworkBehaviour
 
     public void Start()
     {
-        //if (isServer) {
-        //    game = this;
-        //    GameStart();
-
-        //    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        //    ui = GameObject.Find("Canvas").GetComponent<UIController>();
-        //    ui.SetGame();
-
-        //    foreach (var i in players) {
-        //        i.GetComponent<Player>().SetGame(game);
-        //    }
-        //    return;
-        //}
-        //if (isClient) {
-        //    GameStart();
-
-        //    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        //    ui = GameObject.Find("Canvas").GetComponent<UIController>();
-        //    ui.SetGame();
-
-        //    foreach (var i in players) {
-        //        i.GetComponent<Player>().SetGame(game);
-        //    }
-        //}
-
-         game = this;
+        game = this;
         GameStart();
 
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
@@ -118,11 +95,28 @@ public class Game : NetworkBehaviour
 
         if (!isServer) return;
 
+        RpcSendPlayerInfo();
 
         if (ui != null) {
             RpcSendPointText();
         }
 
+    }
+
+    public void UpdatePlayers(Player player)
+    {
+        bool newPlayer = true;
+        for (int i = 0; i < players.Count; i++) {
+            if (players[i].ID == player.ID) {
+                players[i] = player;
+                newPlayer = false;
+                break;
+            }
+        }
+
+        if (newPlayer) {
+            players.Add(player);
+        }
     }
 
     public int getTeamPoint(Team side)
@@ -133,6 +127,38 @@ public class Game : NetworkBehaviour
         }
 
         return blue;
+    }
+
+    [ClientRpc]
+    public void RpcSendPlayerInfo()
+    {
+        GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
+
+        Debug.Log(players.Count);
+
+        for(int i = 0;i < playerObjects.Length; i++) {
+            for(int j= 0; j < players.Count; j++) {
+                Player pObj = playerObjects[i].GetComponent<Player>();
+
+                if (players[j].ID != pObj.ID) continue;
+                
+                if(players[j].Type != pObj.Type) {
+                    switch (players[j].Type) {
+                        case Player.PlayerMode.Chase:
+                            playerObjects[i].AddComponent<ChasePlayer>().ChangeType(players[j]);
+                            Destroy(playerObjects[i].GetComponent<EscapePlayer>());
+                            break;
+                        case Player.PlayerMode.Escape:
+                            playerObjects[i].AddComponent<EscapePlayer>().ChangeType(players[j]);
+                            Destroy(playerObjects[i].GetComponent<ChasePlayer>());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                
+            }
+        }
     }
 
     [ClientRpc]

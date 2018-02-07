@@ -32,6 +32,8 @@ public class EscapePlayer : Player {
     // Update is called once per frame
     public override void Update () {
 
+        if (!isLocalPlayer) return;
+
         if (isDead) {
             if (!pointFlag) {
                 CmdAddPoint(EnemyTeam(),5);
@@ -40,7 +42,6 @@ public class EscapePlayer : Player {
             DeadTime();
         }
 
-        if (!isLocalPlayer) return;
         
         if (MyInput.OnTrigger() && trapId != "") {
             trapPrefab.GetComponent<Trap>().ID = trapId;
