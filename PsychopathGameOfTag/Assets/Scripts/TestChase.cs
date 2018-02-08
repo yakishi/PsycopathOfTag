@@ -12,7 +12,7 @@ public class TestChase : Player
     }
 
     // Update is calcled once per frame
-    public override void Update()
+    public void Update()
     {
         type = PlayerMode.Escape;
 

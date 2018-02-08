@@ -12,11 +12,6 @@ public class Game : NetworkBehaviour
         red,
         blue
     }
-    public enum Mode
-    {
-        Chase,
-        Escape
-    }
 
     static Game game;
     static public Game getGame
@@ -39,12 +34,42 @@ public class Game : NetworkBehaviour
     [SerializeField]
     float limitTime;
 
-    static private List<Player> players = new List<Player>();
+     //private List<Player> players = new List<Player>();
+
+    public struct PlayerInfo
+    {
+        public NetworkInstanceId id;
+        public int type; //0:Chase,1:escape
+
+        public PlayerInfo(Player player)
+        {
+            id = player.ID;
+            type = (int)player.Type;
+        }
+
+        public PlayerInfo(NetworkInstanceId pId,int typeInt)
+        {
+            id = pId;
+            type = typeInt;
+        }
+
+        public void UpdateData(int pType)
+        {
+            type = pType;
+        }
+    }
+
+    public class PlayerInfoList : SyncListStruct<PlayerInfo> { };
+
+    PlayerInfoList playerList = new PlayerInfoList();
 
     [SyncVar]
     int red;
     [SyncVar]
     int blue;
+
+    Player cp;
+    int sendTypetoInt;
 
     public void Start()
     {
@@ -83,19 +108,30 @@ public class Game : NetworkBehaviour
 
     }
 
-    public void UpdatePlayers(Player player)
+    public void AddPlayers(Player player)
     {
-        bool newPlayer = true;
-        for (int i = 0; i < players.Count; i++) {
-            if (players[i].ID == player.ID) {
-                players[i] = player;
-                newPlayer = false;
-                break;
+
+        playerList.Add(new PlayerInfo(player));
+
+        foreach(PlayerInfo info in playerList) {
+            Debug.Log(info.id + " : " + info.type);
+        }
+    }
+
+    [Command]
+    public void CmdUpdatePlayer(NetworkInstanceId pId,int typeInt)
+    {
+        Debug.Log(typeInt);
+
+        for(int i = 0; i < playerList.Count; i++) {
+            if (playerList[i].id == pId) {
+                playerList.Add(new PlayerInfo(pId, typeInt));
+                playerList.RemoveAt(i);
             }
         }
 
-        if (newPlayer) {
-            players.Add(player);
+        foreach (PlayerInfo info in playerList) {
+            Debug.Log(info.id + " : " + info.type);
         }
     }
 
@@ -114,25 +150,51 @@ public class Game : NetworkBehaviour
         GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
 
         for (int i = 0; i < playerObjects.Length; i++) {
-            for (int j = 0; j < players.Count; j++) {
-                Player pObj = playerObjects[i].GetComponent<Player>();
+            Player pObj = playerObjects[i].GetComponent<Player>();
+            foreach(var p in playerList) {
 
-                if (players[j].ID != pObj.ID) continue;
+                if (p.id != pObj.ID) continue;
 
+                if(p.type != (int)pObj.Type) {
+                    cp = pObj;
+                    sendTypetoInt = (int)pObj.Type;
 
-                if (players[j].Type != pObj.Type) {
-                    RpcSendPlayerInfo(j);
-
+                    RpcSendPlayerInfo();
                 }
-
             }
+
+            //for (int j = 0; j < plyer.Count; j++) {
+            //    Player pObj = playerObjects[i].GetComponent<Player>();
+
+            //    if (players[j].ID != pObj.ID) continue;
+
+
+            //    if (players[j].Type != pObj.Type) {
+            //        RpcSendPlayerInfo(j);
+
+            //    }
+
+            //}
         }
     }
 
     [ClientRpc]
-    public void RpcSendPlayerInfo(int i)
+    public void RpcSendPlayerInfo()
     {
-        players[i].ChangeType();
+        switch (sendTypetoInt) {
+            case 0:
+                cp.gameObject.AddComponent<ChasePlayer>().StartChasePlayer();
+                Destroy(cp.GetComponent<EscapePlayer>());
+                break;
+            case 1:
+                cp.gameObject.AddComponent<EscapePlayer>().StartEscapePlayer();
+                Destroy(cp.GetComponent<ChasePlayer>());
+                break;
+        }
+
+        cp.Initialize();
+        
+        //cp.ChangeType(sendTypetoInt);
     }
 
     [ClientRpc]

@@ -5,7 +5,8 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UniRx;
 
-public class Player : NetworkBehaviour {
+public class Player : NetworkBehaviour
+{
 
     public enum PlayerMode
     {
@@ -23,7 +24,7 @@ public class Player : NetworkBehaviour {
         }
     }
 
-    [SerializeField]
+    [SerializeField, SyncVar]
     protected int hp;
     public int HP
     {
@@ -40,9 +41,6 @@ public class Player : NetworkBehaviour {
             return hp <= 0;
         }
     }
-
-    [SerializeField]
-    protected Game game;
 
     protected Player player;
 
@@ -86,13 +84,13 @@ public class Player : NetworkBehaviour {
 
     public override void OnStartLocalPlayer()
     {
-      
+
         Initialize();
+        CmdSendPlayer();
     }
 
-    protected void Initialize()
+    public void Initialize()
     {
-        game = Game.getGame;
         id = GetComponent<NetworkIdentity>().netId;
         mainCamera = GameObject.Find("Main Camera").GetComponent<MainCamera>();
         uIController = GameObject.Find("Canvas").GetComponent<UIController>();
@@ -109,14 +107,14 @@ public class Player : NetworkBehaviour {
         time = new Timer(respownTime);
     }
 
-    public void ChangeType()
+    public void ChangeType(int i)
     {
-        switch (type) {
-            case PlayerMode.Chase:
+        switch (i) {
+            case 0:
                 gameObject.AddComponent<ChasePlayer>().StartChasePlayer();
                 Destroy(gameObject.GetComponent<EscapePlayer>());
                 break;
-            case PlayerMode.Escape:
+            case 1:
                 gameObject.AddComponent<EscapePlayer>().StartEscapePlayer();
                 Destroy(gameObject.GetComponent<ChasePlayer>());
                 break;
@@ -124,16 +122,13 @@ public class Player : NetworkBehaviour {
                 return;
         }
 
-        Initialize();       
+        Initialize();
     }
 
-    public virtual void Update()
+    public void Update()
     {
 
         if (!isLocalPlayer) return;
-
-
-        CmdSendPlayer();
 
         if (killEnemy) {
             DeadTime();
@@ -153,25 +148,47 @@ public class Player : NetworkBehaviour {
     [Command]
     public void CmdSendPlayer()
     {
-        Game.getGame.UpdatePlayers(this);
+        Game.getGame.AddPlayers(this);
     }
 
     [Command]
-    public void CmdHitBullet(int damage)
+    public void CmdUpdataPlayer(NetworkInstanceId pId, int typeInt)
     {
-        hp -=damage;
-        if(hp <= 0) {
+        Game.getGame.CmdUpdatePlayer(pId, typeInt);
+    }
+
+    [Command]
+    public void CmdHitBullet( int damage)
+    {
+        if (isServer) {
+            RpcSendHP(damage);
+            return;
+        }
+
+        else if (isClient) {
+            hp -= damage;
+            if (hp <= 0) {
+                hp = 0;
+            }
+        }
+    }
+
+    [ClientRpc]
+    public void RpcSendHP(int damage)
+    {
+        hp -= damage;
+        if (hp <= 0) {
             hp = 0;
         }
     }
 
     [Command]
-    public void CmdAddPoint(Game.Team enemyTeam,int point)
+    public void CmdAddPoint(Game.Team enemyTeam, int point)
     {
-        Game.getGame.AddPoint(enemyTeam,point);
+        Game.getGame.AddPoint(enemyTeam, point);
     }
 
-    public void CatchTrap(TrapList.Param trap,GameObject obj)
+    public void CatchTrap(TrapList.Param trap, GameObject obj)
     {
         if (trap == null) return;
 
@@ -195,14 +212,14 @@ public class Player : NetworkBehaviour {
                     catchTrap = false;
                 })
                 .AddTo(this);
-                
+
                 break;
             case "N":
                 catchTrap = true;
                 Observable.Timer(System.TimeSpan.FromSeconds(trap.Time))
                 .Take(1)
                 .Subscribe(_ => {
-                    if(type == PlayerMode.Chase) {
+                    if (type == PlayerMode.Chase) {
                         ChasePlayer cahser = gameObject.GetComponent<ChasePlayer>();
                         cahser.Change_Mode("0");
                     }
@@ -248,6 +265,8 @@ public class Player : NetworkBehaviour {
                 default:
                     break;
             }
+
+            CmdUpdataPlayer(id, (int)type);
 
             foreach (Transform n in this.gameObject.transform) {
                 if (n.gameObject.tag == "Weapon") {

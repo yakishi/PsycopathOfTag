@@ -63,11 +63,13 @@ public class ChasePlayer : NetworkBehaviour
 
     public void StartChasePlayer()
     { 
-        muzzle = GameObject.Find("Head"); ;
+        player = GetComponent<Player>();
+        muzzle = player.gameObject;
+        muzzle_Type = Resources.Load("ScriptableObject/MuzzleTypeList") as MuzzleType;
+        modeList = Resources.Load("ModeList/mode") as ModeList;
         muzzleRadius = muzzle_Type.muzzTypeList[mode].GetComponent<SphereCollider>().radius;
         range = modeList.param[0].Range;
         magazine = modeList.param[0].Bullet;
-        player = GetComponent<Player>();
     }
 
     // Update is called once per frame
@@ -112,7 +114,7 @@ public class ChasePlayer : NetworkBehaviour
             player.DeadTime();
         }
         if (player.isChange) {
-            player.ChangeType();
+            player.ChangeType((int)player.Type);
             return;
         }
     }

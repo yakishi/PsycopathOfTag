@@ -44,7 +44,12 @@ public class EscapePlayer : NetworkBehaviour {
             player.DeadTime();
         }
 
-        
+        if (player.isChange) {
+            player.ChangeType((int)player.Type);
+            return;
+        }
+
+
         if (MyInput.OnTrigger() && trapId != "") {
             trapPrefab.GetComponent<Trap>().ID = trapId;
             trapPrefab.GetComponent<Trap>().SetPlayerTeamInfo(player.team);
